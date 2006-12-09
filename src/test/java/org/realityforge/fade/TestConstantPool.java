@@ -72,19 +72,27 @@ public class TestConstantPool
     throws Exception
   {
     final ConstantPool constantPool = getEmptyClassData();
-    final String value = "Code";
-    assertEquals( "getUtfEntry( 6 )", value, constantPool.getUtfEntry( 6 ) );
+    final String value = constantPool.getUtfEntry( 6 );
+    assertEquals( "getUtfEntry( 6 )", "Code", value );
     assertEquals( "strings[6] post get", value, constantPool.strings[6] );
+    //Verify that regetting will get cached value
+    assertEquals( "getUtfEntry( 6 )", value, constantPool.getUtfEntry( 6 ) );
+    assertTrue( "strings[6] identical", value == constantPool.strings[6] );
   }
 
   public void test_getClassEntry_EmptyClass()
     throws Exception
   {
     final ConstantPool constantPool = getEmptyClassData();
-    final String value = "org/realityforge/fade/data/EmptyClass";
-    assertEquals( "getClassEntry( 2 )", value, constantPool.getClassEntry( 2 ) );
+    final String value = constantPool.getClassEntry( 2 );
+    assertEquals( "getClassEntry( 2 )", "org/realityforge/fade/data/EmptyClass", value );
     assertEquals( "strings[2] post get", value, constantPool.strings[2] );
     assertEquals( "strings[14] post get", value, constantPool.strings[14] );
+    assertTrue( "strings[2] == strings[14]", constantPool.strings[2] == constantPool.strings[14] );
+    // Verify using cached value
+    assertEquals( "getClassEntry( 2 )", value, constantPool.getClassEntry( 2 ) );
+    assertTrue( "strings[2] identical", value == constantPool.strings[2] );
+    assertTrue( "strings[14] identical", value == constantPool.strings[14] );
   }
 
   public void test_getEntryType_EmptyClass()
@@ -166,7 +174,13 @@ public class TestConstantPool
   public void test_getStringEntry_NonEmptyClass()
     throws Exception
   {
-    assertEquals( "getStringEntry( 2 )", "What is 6 x 9 in base 13?", getNonEmptyClassData().getStringEntry( 2 ) );
+    final ConstantPool constantPool = getNonEmptyClassData();
+    final String value = constantPool.getStringEntry( 2 );
+    assertEquals( "getStringEntry( 2 )", "What is 6 x 9 in base 13?", value );
+    assertEquals( "strings[2] post get", value, constantPool.strings[2] );
+
+    assertTrue( "strings[2] identical", value == constantPool.getStringEntry( 2 ) );
+    assertTrue( "strings[2] identical", value == constantPool.strings[2] );
   }
 
   public void test_getNameFromRef_FieldRef_NonEmptyClass()
@@ -229,14 +243,15 @@ public class TestConstantPool
   {
     try
     {
-      getNonEmptyClassData().getTypeFromRef( 1 );
+      getNonEmptyClassData().getTypeFromRef( 2 );
+      fail( "Expected to get an exception" );
     }
     catch( final InvalidClassFileException icfe )
     {
       final String message =
-        "Unexpected type for constant pool element 1. Expected a ref type but got 10";
+        "Unexpected type for constant pool element 2. Expected a ref type but got 8";
       assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+      assertEquals( "getOffset()", 15, icfe.getOffset() );
     }
   }
 
@@ -251,6 +266,177 @@ public class TestConstantPool
     {
       final String message =
         "Unexpected type for constant pool element 1. Expected: 8 Actual: 10";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 10, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 6, 'a', (byte)0xCF, (byte)0x8F, (byte)0xEF, (byte)0x8F, (byte)0x80};
+    final String value = ConstantPool.parseUtfString( data, 0, 0 );
+    assertEquals( "value.length", 3, value.length() );
+    assertEquals( "value.charAt( 0 )", 'a', value.charAt( 0 ) );
+    assertEquals( "value.charAt( 1 )", 975, value.charAt( 1 ) );
+    assertEquals( "value.charAt( 2 )", 62400, value.charAt( 2 ) );
+  }
+
+  public void test_parseUtfString_invalid_singlechar()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 1, 0};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 2";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 2, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString_invalid_doublechar_tooshort()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 2, 'a', (byte)0xCF};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 3";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 3, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString_invalid_doublechar()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 3, 'a', (byte)0xCF, (byte)0xFF};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 3";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 3, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString_invalid_triplechar_tooshort()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 5, 'a', (byte)0xCF, (byte)0x8F, (byte)0xEF, (byte)0x8F};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 5";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 5, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString_invalid_triplechar()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 6, 'a', (byte)0xCF, (byte)0x8F, (byte)0xEF, (byte)0x8F, (byte)0xF0};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 5";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 5, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseUtfString_psuedo_quadchar()
+    throws Exception
+  {
+    final byte[] data = new byte[]{0, 7, 'a', (byte)0xCF, (byte)0x8F, (byte)0xFF, (byte)0x8F, (byte)0x80, (byte)0x80};
+    try
+    {
+      ConstantPool.parseUtfString( data, 0, 0 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message =
+        "Constant pool entry 0 has invalid utf8 at 5";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 5, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseConstantPool_with_bad_params()
+  {
+    try
+    {
+      ConstantPool.parseConstantPool( new byte[10], 0, 11 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message = "offset (0) + length (11) > data.length (10)";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 0, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseConstantPool_with_truncation()
+  {
+    try
+    {
+      final byte[] data = new byte[10];
+      data[8]= 2;
+      data[9]= 0;
+      ConstantPool.parseConstantPool( data, 0, 10 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message = "Class file truncated when parsing constant pool.";
+      assertEquals( "getMessage()", message, icfe.getMessage() );
+      assertEquals( "getOffset()", 10, icfe.getOffset() );
+    }
+  }
+
+  public void test_parseConstantPool_with_unkown_tag()
+  {
+    try
+    {
+      final byte[] data = new byte[11];
+      data[8]= 1;
+      data[9]= 0;
+      data[10]= 42;
+      ConstantPool.parseConstantPool( data, 0, 11 );
+      fail( "Expected exception" );
+    }
+    catch( final InvalidClassFileException icfe )
+    {
+      final String message = "Bad constant pool tag 42";
       assertEquals( "getMessage()", message, icfe.getMessage() );
       assertEquals( "getOffset()", 10, icfe.getOffset() );
     }

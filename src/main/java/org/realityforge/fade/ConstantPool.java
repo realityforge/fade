@@ -243,70 +243,86 @@ public final class ConstantPool
     checkType( index, ClassFileFormat.CONSTANT_Utf8 );
     if( null == strings[index] )
     {
-      int offset = offsets[index];
-      final int count = IOUtil.readUnsignedShort( data, offset + 1 );
-      offset += 3;
+      strings[index] = parseUtfString( data, offsets[index] + 1, index );
+    }
+    return strings[index];
+  }
 
-      int size = 0;
+  /**
+   * Parse a UTF string from data.
+   * Format specified in < a href="http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html">ClassFile
+   * Spec</a>. Don't really understand it just mechanically translated.
+   *
+   * @param data the data.
+   * @param baseOffset the offset to start reading utf from.
+   * @param index the constant pool entry. Used in reporting exception.
+   * @return the string.
+   * @throws InvalidClassFileException if string format is invalid.
+   */
+  static String parseUtfString( final byte[] data, final int baseOffset, final int index )
+    throws InvalidClassFileException
+  {
+    final int count = IOUtil.readUnsignedShort( data, baseOffset );
+    int offset = baseOffset + 2;
 
-      //We may over-allocate but this is probably faster
-      final char[] chars = new char[count];
+    int size = 0;
 
-      final int end = count + offset;
+    //We may over-allocate but this is probably faster
+    final char[] chars = new char[count];
 
-      while( offset < end )
+    final int end = count + offset;
+
+    while( offset < end )
+    {
+      final byte ch = data[offset];
+      //Single char utf character - 0xxxxxxx
+      if( 0 == ( ch & 0x80 ) )
       {
-        final byte ch = data[offset];
-        //Single char utf character - 0xxxxxxx
-        if( 0 == ( ch & 0x80 ) )
-        {
-          if( ch == 0 )
-          {
-            throw invalidClassFileException( offset, index );
-          }
-          chars[size++] = (char)ch;
-          offset += 1;
-        }
-        //Double char utf character - 110x xxxx 10xx xxxx
-        else if( 0xC0 == ( ch & 0xE0 ) )
-        {
-          if( offset + 1 >= end )
-          {
-            throw invalidClassFileException( offset, index );
-          }
-          final byte ch2 = data[offset + 1];
-          if( 0x80 != ( ch2 & 0xC0 ) )
-          {
-            throw invalidClassFileException( offset, index );
-          }
-          chars[size++] = (char)( ( ( ch & 0x1F ) << 6 ) + ( ch2 & 0x3F ) );
-          offset += 2;
-        }
-        //Triple char utf character - 1110 xxxx 10xx xxxx 10xx xxxx
-        else if( ( ch & 0xF0 ) == 0xE0 )
-        {
-          if( offset + 2 >= end )
-          {
-            throw invalidClassFileException( offset, index );
-          }
-          final byte ch2 = data[offset + 1];
-          final byte ch3 = data[offset + 2];
-          if( 0x80 != ( ch2 & 0xC0 ) || 0x80 != ( ch3 & 0xC0 ) )
-          {
-            throw invalidClassFileException( offset, index );
-          }
-          chars[size++] =
-            (char)( ( ( ch & 0x0F ) << 12 ) + ( ( ch2 & 0x3F ) << 6 ) + ( ch3 & 0x3F ) );
-          offset += 3;
-        }
-        else
+        if( ch == 0 )
         {
           throw invalidClassFileException( offset, index );
         }
+        chars[size++] = (char)ch;
+        offset += 1;
       }
-      strings[index] = new String( chars, 0, size );
+      //Double char utf character - 110x xxxx 10xx xxxx
+      else if( 0xC0 == ( ch & 0xE0 ) )
+      {
+        if( offset + 1 >= end )
+        {
+          throw invalidClassFileException( offset, index );
+        }
+        final byte ch2 = data[offset + 1];
+        if( 0x80 != ( ch2 & 0xC0 ) )
+        {
+          throw invalidClassFileException( offset, index );
+        }
+        chars[size++] = (char)( ( ( ch & 0x1F ) << 6 ) + ( ch2 & 0x3F ) );
+        offset += 2;
+      }
+      //Triple char utf character - 1110 xxxx 10xx xxxx 10xx xxxx
+      else if( 0xE0 == ( ch & 0xF0 ) )
+      {
+        if( offset + 2 >= end )
+        {
+          throw invalidClassFileException( offset, index );
+        }
+        final byte ch2 = data[offset + 1];
+        final byte ch3 = data[offset + 2];
+        if( 0x80 != ( ch2 & 0xC0 ) || 0x80 != ( ch3 & 0xC0 ) )
+        {
+          throw invalidClassFileException( offset, index );
+        }
+        chars[size++] =
+          (char)( ( ( ch & 0x0F ) << 12 ) + ( ( ch2 & 0x3F ) << 6 ) + ( ch3 & 0x3F ) );
+        offset += 3;
+      }
+      else
+      {
+        throw invalidClassFileException( offset, index );
+      }
     }
-    return strings[index];
+    return new String( chars, 0, size );
   }
 
   /**
@@ -316,8 +332,8 @@ public final class ConstantPool
    * @param index  the index.
    * @return the exception.
    */
-  private InvalidClassFileException invalidClassFileException( final int offset,
-                                                               final int index )
+  private static InvalidClassFileException invalidClassFileException( final int offset,
+                                                                      final int index )
   {
     final String message =
       "Constant pool entry " + index + " has invalid utf8 at " + offset;
@@ -390,22 +406,23 @@ public final class ConstantPool
    * The array is now owned by ConstantPool object and should not be modified
    * within the range betweem offset and offset+length.
    *
-   * @param data the data array.
+   * @param data   the data array.
    * @param offset the offset into the array where start of classfile resides.
    * @param length the length of classfile data.
    * @return the newly created ConstantPool.
+   * @throws InvalidClassFileException if data not valid.
    */
   public static ConstantPool parseConstantPool( final byte[] data,
                                                 final int offset,
                                                 final int length )
-    throws Exception
+    throws InvalidClassFileException
   {
     if( offset + length > data.length )
     {
       final String message =
         "offset (" + + offset + ") + length (" + length +
         ") > data.length (" + data.length + ")";
-      throw new IllegalArgumentException( message );
+      throw new InvalidClassFileException( offset, message );
     }
 
     final int constantCount = IOUtil.readUnsignedShort( data, offset + 8 );
