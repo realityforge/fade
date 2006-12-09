@@ -1,10 +1,15 @@
 package org.realityforge.fade;
 
-/**
- * Utility class with helpers for doing IO on classfiles.
- */
+/** Utility class with helpers for doing IO on classfiles. */
 class IOUtil
 {
+  /**
+   * Read in integer in big-endian order.
+   *
+   * @param data   the data.
+   * @param offset the offset.
+   * @return the value.
+   */
   static int readInteger( final byte[] data, final int offset )
   {
     return ( ( data[offset] ) << 24 ) +
@@ -13,6 +18,13 @@ class IOUtil
            ( data[offset + 3] & 0xFF );
   }
 
+  /**
+   * Read in long in big-endian order.
+   *
+   * @param data   the data.
+   * @param offset the offset.
+   * @return the value.
+   */
   static long readLong( final byte[] data, final int offset )
   {
     return (
@@ -26,6 +38,13 @@ class IOUtil
       ( (long)( data[offset + 7] & 0xff ) ) );
   }
 
+  /**
+   * Read in an unsigned short in big-endian order.
+   *
+   * @param data   the data.
+   * @param offset the offset.
+   * @return the value.
+   */
   static int readUnsignedShort( final byte[] data, final int offset )
   {
     return ( ( data[offset] & 0xFF ) << 8 ) |
