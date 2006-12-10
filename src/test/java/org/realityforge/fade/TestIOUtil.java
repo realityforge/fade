@@ -22,9 +22,9 @@ public class TestIOUtil
     data[1] = 89;
     data[2] = 62;
     data[3] = -122;
-    assertEquals( 89504110109809L, IOUtil.readUnsignedInteger( data, 0 ) );
+    assertEquals( 2237218438L, IOUtil.readUnsignedInteger( data, 0 ) );
   }
-  
+
   public void test_readUnsignedShort()
   {
     final byte[] data = new byte[2];
