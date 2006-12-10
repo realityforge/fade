@@ -231,7 +231,7 @@ public class ClassFile
    */
   public static ClassFile parseClassFile( final byte[] data )
   {
-    checkLength( data, 0, 10 );
+    IOUtil.checkLength( data, 0, 10 );
     final int magic = IOUtil.readInteger( data, 0 );
     if( ClassFileFormat.MAGIC != magic )
     {
@@ -248,27 +248,27 @@ public class ClassFile
     }
     final ConstantPool constantPool = ConstantPool.parseConstantPool( data );
     int offset = constantPool.getClassHeaderOffset();
-    checkLength( data, offset, 8 );
+    IOUtil.checkLength( data, offset, 8 );
     offset += 6;
     final int interfaceCount = IOUtil.readUnsignedShort( data, offset );
     offset += 2;
-    checkLength( data, offset, interfaceCount * 2 );
+    IOUtil.checkLength( data, offset, interfaceCount * 2 );
     //Skip over interfaces.
     offset += interfaceCount * 2;
 
-    checkLength( data, offset, 2 );
+    IOUtil.checkLength( data, offset, 2 );
     final int fieldCount = IOUtil.readUnsignedShort( data, offset );
     offset += 2;
     final int[] fieldOffsets = new int[fieldCount];
     offset = parseFields( data, offset, fieldOffsets );
 
-    checkLength( data, offset, 2 );
+    IOUtil.checkLength( data, offset, 2 );
     final int methodCount = IOUtil.readUnsignedShort( data, offset );
     final int[] methodOffsets = new int[methodCount];
     offset = parseMethods( data, offset + 2, methodOffsets );
 
     final int attributeoffset = offset;
-    checkLength( data, offset, 2 );
+    IOUtil.checkLength( data, offset, 2 );
     final int attributeCount = IOUtil.readUnsignedShort( data, offset );
     offset = parseAttributes( data, offset + 2, attributeCount );
 
@@ -298,7 +298,7 @@ public class ClassFile
     for( int i = 0; i < fieldOffsets.length; i++ )
     {
       fieldOffsets[i] = offset;
-      checkLength( data, offset, 8 );
+      IOUtil.checkLength( data, offset, 8 );
       final int count = IOUtil.readUnsignedShort( data, offset + 6 );
       offset = parseAttributes( data, offset + 8, count );
     }
@@ -321,7 +321,7 @@ public class ClassFile
     for( int i = 0; i < methodOffsets.length; i++ )
     {
       methodOffsets[i] = offset;
-      checkLength( data, offset, 8 );
+      IOUtil.checkLength( data, offset, 8 );
       final int count = IOUtil.readUnsignedShort( data, offset + 6 );
       offset = parseAttributes( data, offset + 8, count );
     }
@@ -340,30 +340,12 @@ public class ClassFile
   {
     for( int i = 0; i < count; i++ )
     {
-      checkLength( data, offset, 6 );
+      IOUtil.checkLength( data, offset, 6 );
       final long size = IOUtil.readUnsignedInteger( data, offset + 2 );
       offset += 6;
-      checkLength( data, offset, size );
+      IOUtil.checkLength( data, offset, size );
       offset += size;
     }
     return offset;
-  }
-
-  /**
-   * Throw an exception if there is not enough data left.
-   *
-   * @param data     the data.
-   * @param offset   the current offset.
-   * @param required the amount required.
-   */
-  private static void checkLength( final byte[] data, final int offset, final long required )
-  {
-    if( data.length < offset + required )
-    {
-      final String message =
-        "Class file is truncated. Require " + required + " bytes at position " +
-        offset + " when class file is only " + data.length + " bytes long.";
-      throw new ClassFormatError( message );
-    }
   }
 }

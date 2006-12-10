@@ -46,4 +46,25 @@ public class TestIOUtil
     data[7] = -127;
     assertEquals( -8837964292910800767L, IOUtil.readLong( data, 0 ) );
   }
+
+  public void test_checkLength()
+  {
+    IOUtil.checkLength( new byte[10], 0, 1 );
+  }
+
+  public void test_checkLength_when_not_enough_length()
+  {
+    try
+    {
+      IOUtil.checkLength( new byte[10], 0, 11 );
+      fail( "Expected an exception" );
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "Class file is truncated. Require 11 bytes at position " +
+        "0 when class file is only 10 bytes long.";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
+    }
+  }
 }

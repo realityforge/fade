@@ -66,4 +66,22 @@ class IOUtil
     return ( ( data[offset] & 0xFF ) << 8 ) |
            ( ( data[offset + 1] & 0xFF ) );
   }
+
+  /**
+   * Throw an exception if there is not enough data left.
+   *
+   * @param data     the data.
+   * @param offset   the current offset.
+   * @param required the amount required.
+   */
+  static void checkLength( final byte[] data, final int offset, final long required )
+  {
+    if( data.length < offset + required )
+    {
+      final String message =
+        "Class file is truncated. Require " + required + " bytes at position " +
+        offset + " when class file is only " + data.length + " bytes long.";
+      throw new ClassFormatError( message );
+    }
+  }
 }
