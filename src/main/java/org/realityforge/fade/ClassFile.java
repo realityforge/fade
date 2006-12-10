@@ -282,6 +282,14 @@ public class ClassFile
     return new ClassFile( data, constantPool, methodOffsets, fieldOffsets, attributeoffset );
   }
 
+  /**
+   * Parse field_info section.
+   *
+   * @param data the bytes.
+   * @param baseOffset the offset to start parsing from.
+   * @param fieldOffsets the array to store offsets of field_infos.
+   * @return the position after last field is parsed.
+   */
   private static int parseFields( final byte[] data,
                                   final int baseOffset,
                                   final int[] fieldOffsets )
@@ -297,6 +305,14 @@ public class ClassFile
     return offset;
   }
 
+  /**
+   * Parse method_info section.
+   *
+   * @param data the bytes.
+   * @param baseOffset the offset to start parsing from.
+   * @param methodOffsets the array to store offsets of method_infos.
+   * @return the position after last method is parsed.
+   */
   private static int parseMethods( final byte[] data,
                                    final int baseOffset,
                                    final int[] methodOffsets )
@@ -312,6 +328,14 @@ public class ClassFile
     return offset;
   }
 
+  /**
+   * Parse attribute section.
+   *
+   * @param data the bytes.
+   * @param offset the offset to start parsing from.
+   * @param count the number of attributes expected.
+   * @return the position after last attribute is parsed.
+   */
   private static int parseAttributes( final byte[] data, int offset, int count )
   {
     for( int i = 0; i < count; i++ )
