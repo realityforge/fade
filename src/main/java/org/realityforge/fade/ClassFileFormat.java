@@ -54,4 +54,25 @@ public interface ClassFileFormat
   int CONSTANT_Methodref = 10;
   int CONSTANT_InterfaceMethodref = 11;
   int CONSTANT_NameAndType = 12;
+
+  /* Constants for attributes */
+
+  String ATTR_Deprecated = "Deprecated"; //Method + Field ==> access |= ACC_DEPRECATED
+  String ATTR_Synthetic = "Synthetic"; //Method + Field ==> access |= ACC_SYNTHETIC
+  String ATTR_ConstantValue = "ConstantValue"; //Field
+  String ATTR_Exceptions = "Exceptions"; //Method
+  String ATTR_Code = "Code"; //Method
+  String ATTR_SourceFile = "SourceFile"; //Class
+  String ATTR_InnerClasses = "InnerClasses"; //Class
+  String ATTR_EnclosingMethod = "EnclosingMethod"; //Class
+  String ATTR_SourceDebugExtension = "SourceDebugExtension"; //Class
+  String ATTR_LineNumberTable = "LineNumberTable"; //Code
+  String ATTR_LocalVariableTable = "LocalVariableTable"; //Code
+  String ATTR_StackMapTable = "StackMapTable"; //Code
+  String ATTR_Signature = "Signature"; //???
+  String ATTR_AnnotationDefault = "AnnotationDefault"; //Method
+  String ATTR_RuntimeVisibleAnnotations = "RuntimeVisibleAnnotations"; //Class, Method, Field
+  String ATTR_RuntimeInvisibleAnnotations = "RuntimeInvisibleAnnotations"; //Class, Method, Field (We should ignore)
+  String ATTR_RuntimeVisibleParameterAnnotations = "RuntimeVisibleParameterAnnotations"; //Method
+  String ATTR_RuntimeInvisibleParameterAnnotations = "RuntimeInvisibleParameterAnnotations"; //Method (We should ignore)
 }
