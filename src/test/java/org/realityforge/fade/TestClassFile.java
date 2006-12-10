@@ -90,13 +90,13 @@ public class TestClassFile
     final byte[] bytes = loadTestData( "EmptyClass.class.dat" );
     final ClassFile classFile = ClassFile.parseClassFile( bytes );
 
-    assertEquals( "data", bytes, classFile.data );
-    assertEquals( "fieldOffsets.length", 0, classFile.fieldOffsets.length );
-    assertEquals( "methodOffsets.length", 1, classFile.methodOffsets.length );
-    assertEquals( "methodOffsets[0]", 238, classFile.methodOffsets[0] );
-    assertEquals( "attributeOffset", 299, classFile.attributeOffset );
-    assertNotNull( "constantPool", classFile.constantPool );
-    assertEquals( "constantPool.getConstantCount()", 15, classFile.constantPool.getConstantCount() );
+    assertEquals( "data", bytes, classFile.getData() );
+    assertEquals( "fieldOffsets.length", 0, classFile.getFieldOffsets().length );
+    assertEquals( "methodOffsets.length", 1, classFile.getMethodOffsets().length );
+    assertEquals( "methodOffsets[0]", 238, classFile.getMethodOffsets()[0] );
+    assertEquals( "attributeOffset", 299, classFile.getAttributeOffset() );
+    assertNotNull( "constantPool", classFile.getConstantPool() );
+    assertEquals( "constantPool.getConstantCount()", 15, classFile.getConstantPool().getConstantCount() );
   }
 
   public void test_getMinorVersion_on_EmptyClass()

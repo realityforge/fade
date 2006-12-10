@@ -4,19 +4,19 @@ package org.realityforge.fade;
 public class ClassFile
 {
   /** The read-only data representing class. */
-  final byte[] data;
+  private final byte[] data;
 
   /** The read-only method of accessing the constant pool. */
-  final ConstantPool constantPool;
+  private final ConstantPool constantPool;
 
   /** Offsets for all the method_infos. */
-  final int[] methodOffsets;
+  private final int[] methodOffsets;
 
   /** Offsets for all the field_infos. */
-  final int[] fieldOffsets;
+  private final int[] fieldOffsets;
 
   /** Offsets for top level attributes. */
-  final int attributeOffset;
+  private final int attributeOffset;
 
   private ClassFile( final byte[] data,
                      final ConstantPool constantPool,
@@ -347,5 +347,30 @@ public class ClassFile
       offset += size;
     }
     return offset;
+  }
+
+  byte[] getData()
+  {
+    return data;
+  }
+
+  ConstantPool getConstantPool()
+  {
+    return constantPool;
+  }
+
+  int[] getMethodOffsets()
+  {
+    return methodOffsets;
+  }
+
+  int[] getFieldOffsets()
+  {
+    return fieldOffsets;
+  }
+
+  int getAttributeOffset()
+  {
+    return attributeOffset;
   }
 }
