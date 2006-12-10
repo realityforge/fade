@@ -11,7 +11,7 @@ public class TestConstantPool
     throws Exception
   {
     final byte[] bytes = loadTestData( "EmptyClass.class.dat" );
-    final ConstantPool constantPool = ConstantPool.parseConstantPool( bytes, 0, bytes.length );
+    final ConstantPool constantPool = ConstantPool.parseConstantPool( bytes );
     assertEquals( "data", bytes, constantPool.data );
     final int count = 16;
     assertEquals( "offsets.length", constantPool.offsets.length, count );
@@ -390,21 +390,6 @@ public class TestConstantPool
     }
   }
 
-  public void test_parseConstantPool_with_bad_params()
-  {
-    try
-    {
-      ConstantPool.parseConstantPool( new byte[10], 0, 11 );
-      fail( "Expected exception" );
-    }
-    catch( final InvalidClassFileException icfe )
-    {
-      final String message = "offset (0) + length (11) > data.length (10)";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
-    }
-  }
-
   public void test_parseConstantPool_with_truncation()
   {
     try
@@ -412,7 +397,7 @@ public class TestConstantPool
       final byte[] data = new byte[10];
       data[8]= 2;
       data[9]= 0;
-      ConstantPool.parseConstantPool( data, 0, 10 );
+      ConstantPool.parseConstantPool( data );
       fail( "Expected exception" );
     }
     catch( final InvalidClassFileException icfe )
@@ -431,7 +416,7 @@ public class TestConstantPool
       data[8]= 1;
       data[9]= 0;
       data[10]= 42;
-      ConstantPool.parseConstantPool( data, 0, 11 );
+      ConstantPool.parseConstantPool( data );
       fail( "Expected exception" );
     }
     catch( final InvalidClassFileException icfe )
@@ -446,14 +431,14 @@ public class TestConstantPool
     throws Exception
   {
     final byte[] bytes = loadTestData( "EmptyClass.class.dat" );
-    return ConstantPool.parseConstantPool( bytes, 0, bytes.length );
+    return ConstantPool.parseConstantPool( bytes );
   }
 
   private ConstantPool getNonEmptyClassData()
     throws Exception
   {
     final byte[] bytes = loadTestData( "NonEmptyClass.class.dat" );
-    return ConstantPool.parseConstantPool( bytes, 0, bytes.length );
+    return ConstantPool.parseConstantPool( bytes );
   }
 
   private byte[] loadTestData( final String resource )

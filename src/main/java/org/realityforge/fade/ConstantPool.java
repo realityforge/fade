@@ -253,9 +253,9 @@ public final class ConstantPool
    * Format specified in < a href="http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html">ClassFile
    * Spec</a>. Don't really understand it just mechanically translated.
    *
-   * @param data the data.
+   * @param data       the data.
    * @param baseOffset the offset to start reading utf from.
-   * @param index the constant pool entry. Used in reporting exception.
+   * @param index      the constant pool entry. Used in reporting exception.
    * @return the string.
    * @throws InvalidClassFileException if string format is invalid.
    */
@@ -403,40 +403,23 @@ public final class ConstantPool
 
   /**
    * Parse Constant Pool.
-   * The array is now owned by ConstantPool object and should not be modified
-   * within the range betweem offset and offset+length.
    *
-   * @param data   the data array.
-   * @param offset the offset into the array where start of classfile resides.
-   * @param length the length of classfile data.
+   * @param data the data array.
    * @return the newly created ConstantPool.
    * @throws InvalidClassFileException if data not valid.
    */
-  public static ConstantPool parseConstantPool( final byte[] data,
-                                                final int offset,
-                                                final int length )
+  public static ConstantPool parseConstantPool( final byte[] data )
     throws InvalidClassFileException
   {
-    if( offset + length > data.length )
-    {
-      final String message =
-        "offset (" + + offset + ") + length (" + length +
-        ") > data.length (" + data.length + ")";
-      throw new InvalidClassFileException( offset, message );
-    }
-
-    final int constantCount = IOUtil.readUnsignedShort( data, offset + 8 );
-
+    final int constantCount = IOUtil.readUnsignedShort( data, 8 );
     final int[] elements = new int[constantCount];
-    final int end = offset + length;
 
-    int index = offset + 10;
-
+    int index = 10;
     for( int i = 1; i < constantCount; i++ )
     {
       elements[i] = index;
 
-      if( index >= end )
+      if( index >= data.length )
       {
         throw new InvalidClassFileException( index, "Class file truncated when parsing constant pool." );
       }
