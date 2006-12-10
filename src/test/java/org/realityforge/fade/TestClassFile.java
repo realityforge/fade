@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 public class TestClassFile
   extends TestCase
 {
-  public void test_parseClassFile_withbagmagic_EmptyClass()
+  public void test_parseClassFile_with_bag_magic_on_EmptyClass()
     throws Exception
   {
     final byte[] bytes = loadTestData( "EmptyClass.class.dat" );
@@ -20,11 +20,10 @@ public class TestClassFile
       ClassFile.parseClassFile( bytes );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message = "Bad magic number 0";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -39,11 +38,10 @@ public class TestClassFile
       ClassFile.parseClassFile( bytes );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message = "Bad class file version 0.3";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 6, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -58,11 +56,11 @@ public class TestClassFile
       ClassFile.parseClassFile( badBytes );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError icfe )
     {
-      final String message = "Data past end of class definition.";
+      final String message =
+        "Class definition ends at position 309 when the class data is 310 bytes long.";
       assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 309, icfe.getOffset() );
     }
   }
 
@@ -77,12 +75,12 @@ public class TestClassFile
       ClassFile.parseClassFile( badBytes );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Class file truncated. data.length (308) < offset (307) + required (2)";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 307, icfe.getOffset() );
+        "Class file is truncated. Require 2 bytes at position " +
+        "307 when class file is only 308 bytes long.";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -177,16 +175,15 @@ public class TestClassFile
       getNonEmptyClassData().getMethodAccessFlags( -1 );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Requested invalid method index. Available: 6 Actual: -1";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+        "Requested invalid method index -1 when there is only 6 methods";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
-  public void test_getMethodX_toohighindex_on_NonEmptyClass()
+  public void test_getMethodX_too_high_index_on_NonEmptyClass()
     throws Exception
   {
     try
@@ -194,12 +191,11 @@ public class TestClassFile
       getNonEmptyClassData().getMethodAccessFlags( 1000 );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Requested invalid method index. Available: 6 Actual: 1000";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+        "Requested invalid method index 1000 when there is only 6 methods";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -251,12 +247,11 @@ public class TestClassFile
       getNonEmptyClassData().getFieldAccessFlags( -1 );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Requested invalid field index. Available: 2 Actual: -1";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+        "Requested invalid field index -1 when there is only 2 fields";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -268,12 +263,11 @@ public class TestClassFile
       getNonEmptyClassData().getFieldAccessFlags( 1000 );
       fail( "Expected an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Requested invalid field index. Available: 2 Actual: 1000";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+        "Requested invalid field index 1000 when there is only 2 fields";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 

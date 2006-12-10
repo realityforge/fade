@@ -30,12 +30,11 @@ public class TestConstantPool
       getEmptyClassData().getEntryType( 0 );
       fail( "Expected to get an IllegalArgumentException when accessing 0th entry" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Can not access constant pool element 0 as it is not in the range [1-16)";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -47,12 +46,11 @@ public class TestConstantPool
       getEmptyClassData().getEntryType( 16 );
       fail( "Expected to get an IllegalArgumentException when accessing 16th entry" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Can not access constant pool element 16 as it is not in the range [1-16)";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 0, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -246,12 +244,11 @@ public class TestConstantPool
       getNonEmptyClassData().getTypeFromRef( 2 );
       fail( "Expected to get an exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Unexpected type for constant pool element 2. Expected a ref type but got 8";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 15, icfe.getOffset() );
+        "Unexpected type for constant pool element 2. Expected a ref type but got 8 at position 15";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -262,12 +259,11 @@ public class TestConstantPool
     {
       getNonEmptyClassData().getStringEntry( 1 );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
-        "Unexpected type for constant pool element 1. Expected: 8 Actual: 10";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 10, icfe.getOffset() );
+        "Unexpected type for constant pool element 1. Expected: 8 Actual: 10 at position 10";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -291,12 +287,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 2";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 2, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -309,12 +304,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 3";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 3, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -327,12 +321,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 3";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 3, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -345,12 +338,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 5";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 5, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -363,12 +355,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 5";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 5, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -381,12 +372,11 @@ public class TestConstantPool
       ConstantPool.parseUtfString( data, 0, 0 );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
       final String message =
         "Constant pool entry 0 has invalid utf8 at 5";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 5, icfe.getOffset() );
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -400,11 +390,10 @@ public class TestConstantPool
       ConstantPool.parseConstantPool( data );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
-      final String message = "Class file truncated when parsing constant pool.";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 10, icfe.getOffset() );
+      final String message = "Class file truncated when parsing constant pool at position 10";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 
@@ -419,11 +408,10 @@ public class TestConstantPool
       ConstantPool.parseConstantPool( data );
       fail( "Expected exception" );
     }
-    catch( final InvalidClassFileException icfe )
+    catch( final ClassFormatError cfe )
     {
-      final String message = "Bad constant pool tag 42";
-      assertEquals( "getMessage()", message, icfe.getMessage() );
-      assertEquals( "getOffset()", 10, icfe.getOffset() );
+      final String message = "Bad constant pool tag 42 at position 10";
+      assertEquals( "getMessage()", message, cfe.getMessage() );
     }
   }
 

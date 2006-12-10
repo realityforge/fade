@@ -47,7 +47,6 @@ public class ClassFile
    * @return the name of the class.
    */
   public String getClassName()
-    throws InvalidClassFileException
   {
     final int offset = constantPool.getClassHeaderOffset() + 2;
     final int index = IOUtil.readUnsignedShort( data, offset );
@@ -60,7 +59,6 @@ public class ClassFile
    * @return the name of the super class.
    */
   public String getSuperClassName()
-    throws InvalidClassFileException
   {
     final int offset = constantPool.getClassHeaderOffset() + 4;
     final int index = IOUtil.readUnsignedShort( data, offset );
@@ -73,7 +71,6 @@ public class ClassFile
    * @return the number of interfaces.
    */
   public int getInterfacesCount()
-    throws InvalidClassFileException
   {
     final int offset = constantPool.getClassHeaderOffset() + 6;
     return IOUtil.readUnsignedShort( data, offset );
@@ -85,7 +82,6 @@ public class ClassFile
    * @return an array of interface names in internal format.
    */
   public String[] getInterfaces()
-    throws InvalidClassFileException
   {
     int offset = constantPool.getClassHeaderOffset() + 6;
     final int count = IOUtil.readUnsignedShort( data, offset );
@@ -104,10 +100,8 @@ public class ClassFile
    *
    * @param index the method index.
    * @return the access flags for method.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public int getMethodAccessFlags( final int index )
-    throws InvalidClassFileException
   {
     checkMethodIndex( index );
     return IOUtil.readUnsignedShort( data, methodOffsets[index] );
@@ -118,10 +112,8 @@ public class ClassFile
    *
    * @param index the method index.
    * @return the name of specified method.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public String getMethodName( final int index )
-    throws InvalidClassFileException
   {
     checkMethodIndex( index );
     final int utfIndex = IOUtil.readUnsignedShort( data, methodOffsets[index] + 2 );
@@ -133,10 +125,8 @@ public class ClassFile
    *
    * @param index the method index.
    * @return the method descriptor in internal format.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public String getMethodDescriptor( final int index )
-    throws InvalidClassFileException
   {
     checkMethodIndex( index );
     final int utfIndex = IOUtil.readUnsignedShort( data, methodOffsets[index] + 4 );
@@ -147,16 +137,14 @@ public class ClassFile
    * Check that access to specified method index is valid.
    *
    * @param index the index.
-   * @throws InvalidClassFileException if index is invalid.
    */
   private void checkMethodIndex( final int index )
-    throws InvalidClassFileException
   {
     if( index < 0 || index > methodOffsets.length )
     {
       final String message =
-        "Requested invalid method index. Available: " + methodOffsets.length + " Actual: " + index;
-      throw new InvalidClassFileException( 0, message );
+        "Requested invalid method index " + index + " when there is only " + methodOffsets.length + " methods";
+      throw new ClassFormatError( message );
     }
   }
 
@@ -165,10 +153,8 @@ public class ClassFile
    *
    * @param index the field index.
    * @return the access flags for field.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public int getFieldAccessFlags( final int index )
-    throws InvalidClassFileException
   {
     checkFieldIndex( index );
     return IOUtil.readUnsignedShort( data, fieldOffsets[index] );
@@ -179,10 +165,8 @@ public class ClassFile
    *
    * @param index the field index.
    * @return the name of specified field.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public String getFieldName( final int index )
-    throws InvalidClassFileException
   {
     checkFieldIndex( index );
     final int utfIndex = IOUtil.readUnsignedShort( data, fieldOffsets[index] + 2 );
@@ -194,10 +178,8 @@ public class ClassFile
    *
    * @param index the field index.
    * @return the field descriptor in internal format.
-   * @throws InvalidClassFileException if index is invalid.
    */
   public String getFieldDescriptor( final int index )
-    throws InvalidClassFileException
   {
     checkFieldIndex( index );
     final int utfIndex = IOUtil.readUnsignedShort( data, fieldOffsets[index] + 4 );
@@ -208,16 +190,14 @@ public class ClassFile
    * Check that access to specified field index is valid.
    *
    * @param index the index.
-   * @throws InvalidClassFileException if index is invalid.
    */
   private void checkFieldIndex( final int index )
-    throws InvalidClassFileException
   {
     if( index < 0 || index > fieldOffsets.length )
     {
       final String message =
-        "Requested invalid field index. Available: " + fieldOffsets.length + " Actual: " + index;
-      throw new InvalidClassFileException( 0, message );
+        "Requested invalid field index " + index + " when there is only " + fieldOffsets.length + " fields";
+      throw new ClassFormatError( message );
     }
   }
 
@@ -248,16 +228,14 @@ public class ClassFile
    *
    * @param data the data array.
    * @return the newly created ConstantPool.
-   * @throws InvalidClassFileException if data not valid.
    */
   public static ClassFile parseClassFile( final byte[] data )
-    throws InvalidClassFileException
   {
     checkLength( data, 0, 10 );
     final int magic = IOUtil.readInteger( data, 0 );
     if( ClassFileFormat.MAGIC != magic )
     {
-      throw new InvalidClassFileException( 0, "Bad magic number " + magic );
+      throw new ClassFormatError( "Bad magic number " + magic );
     }
     final int majorVersion = IOUtil.readUnsignedShort( data, 6 );
     final int minorVersion = IOUtil.readUnsignedShort( data, 4 );
@@ -266,7 +244,7 @@ public class ClassFile
         majorVersion > ClassFileFormat.MAJOR_VERSION_5 )
     {
       final String message = "Bad class file version " + majorVersion + "." + minorVersion;
-      throw new InvalidClassFileException( 6, message );
+      throw new ClassFormatError( message );
     }
     final ConstantPool constantPool = ConstantPool.parseConstantPool( data );
     int offset = constantPool.getClassHeaderOffset();
@@ -296,8 +274,10 @@ public class ClassFile
 
     if( offset != data.length )
     {
-      final String message = "Data past end of class definition.";
-      throw new InvalidClassFileException( offset, message );
+      final String message =
+        "Class definition ends at position " + offset + " when the class data is " +
+        data.length + " bytes long.";
+      throw new ClassFormatError( message );
     }
     return new ClassFile( data, constantPool, methodOffsets, fieldOffsets, attributeoffset );
   }
@@ -305,7 +285,6 @@ public class ClassFile
   private static int parseFields( final byte[] data,
                                   final int baseOffset,
                                   final int[] fieldOffsets )
-    throws InvalidClassFileException
   {
     int offset = baseOffset;
     for( int i = 0; i < fieldOffsets.length; i++ )
@@ -321,7 +300,6 @@ public class ClassFile
   private static int parseMethods( final byte[] data,
                                    final int baseOffset,
                                    final int[] methodOffsets )
-    throws InvalidClassFileException
   {
     int offset = baseOffset;
     for( int i = 0; i < methodOffsets.length; i++ )
@@ -335,7 +313,6 @@ public class ClassFile
   }
 
   private static int parseAttributes( final byte[] data, int offset, int count )
-    throws InvalidClassFileException
   {
     for( int i = 0; i < count; i++ )
     {
@@ -354,17 +331,15 @@ public class ClassFile
    * @param data     the data.
    * @param offset   the current offset.
    * @param required the amount required.
-   * @throws InvalidClassFileException if not enough data left.
    */
   private static void checkLength( final byte[] data, final int offset, final long required )
-    throws InvalidClassFileException
   {
     if( data.length < offset + required )
     {
       final String message =
-        "Class file truncated. data.length (" + data.length + ") < offset (" +
-        offset + ") + required (" + required + ")";
-      throw new InvalidClassFileException( offset, message );
+        "Class file is truncated. Require " + required + " bytes at position " +
+        offset + " when class file is only " + data.length + " bytes long.";
+      throw new ClassFormatError( message );
     }
   }
 }

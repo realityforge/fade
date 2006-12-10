@@ -49,10 +49,8 @@ public final class ConstantPool
    *
    * @param index the index of constant pool entry.
    * @return the type.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public byte getEntryType( final int index )
-    throws InvalidClassFileException
   {
     checkRange( index );
     return data[offsets[index]];
@@ -64,10 +62,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the name of class.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getClassEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Class );
     if( null == strings[index] )
@@ -84,10 +80,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the string.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getStringEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_String );
     if( null == strings[index] )
@@ -103,10 +97,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the float.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public float getFloatEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Float );
     return Float.intBitsToFloat( IOUtil.readInteger( data, offsets[index] + 1 ) );
@@ -117,10 +109,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the double.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public double getDoubleEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Double );
     return Double.longBitsToDouble( IOUtil.readLong( data, offsets[index] + 1 ) );
@@ -131,10 +121,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the integer.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public int getIntegerEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Integer );
     return IOUtil.readInteger( data, offsets[index] + 1 );
@@ -145,10 +133,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the long.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public long getLongEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Long );
     return IOUtil.readLong( data, offsets[index] + 1 );
@@ -159,10 +145,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the name.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getNameFromNameAndType( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_NameAndType );
     final int utfEntry = IOUtil.readUnsignedShort( data, offsets[index] + 1 );
@@ -174,10 +158,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the type.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getTypeFromNameAndType( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_NameAndType );
     final int utfEntry = IOUtil.readUnsignedShort( data, offsets[index] + 3 );
@@ -189,10 +171,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the class.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getClassFromRef( final int index )
-    throws InvalidClassFileException
   {
     checkIsRefType( index );
     final int entry = IOUtil.readUnsignedShort( data, offsets[index] + 1 );
@@ -204,10 +184,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the name.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getNameFromRef( final int index )
-    throws InvalidClassFileException
   {
     checkIsRefType( index );
     final int entry = IOUtil.readUnsignedShort( data, offsets[index] + 3 );
@@ -219,10 +197,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the type.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getTypeFromRef( final int index )
-    throws InvalidClassFileException
   {
     checkIsRefType( index );
     final int entry = IOUtil.readUnsignedShort( data, offsets[index] + 3 );
@@ -235,10 +211,8 @@ public final class ConstantPool
    *
    * @param index the index of entry.
    * @return the string.
-   * @throws InvalidClassFileException if entry format is invalid.
    */
   public String getUtfEntry( final int index )
-    throws InvalidClassFileException
   {
     checkType( index, ClassFileFormat.CONSTANT_Utf8 );
     if( null == strings[index] )
@@ -257,10 +231,8 @@ public final class ConstantPool
    * @param baseOffset the offset to start reading utf from.
    * @param index      the constant pool entry. Used in reporting exception.
    * @return the string.
-   * @throws InvalidClassFileException if string format is invalid.
    */
   static String parseUtfString( final byte[] data, final int baseOffset, final int index )
-    throws InvalidClassFileException
   {
     final int count = IOUtil.readUnsignedShort( data, baseOffset );
     int offset = baseOffset + 2;
@@ -326,28 +298,26 @@ public final class ConstantPool
   }
 
   /**
-   * Create an InvalidClassFileException for invalid utf content.
+   * Create an ClassFormatError for invalid utf content.
    *
    * @param offset the offset.
    * @param index  the index.
    * @return the exception.
    */
-  private static InvalidClassFileException invalidClassFileException( final int offset,
+  private static ClassFormatError invalidClassFileException( final int offset,
                                                                       final int index )
   {
     final String message =
       "Constant pool entry " + index + " has invalid utf8 at " + offset;
-    return new InvalidClassFileException( offset, message );
+    return new ClassFormatError( message );
   }
 
   /**
    * Throw an IllegalArgumentException if entry at index is not a reference.
    *
    * @param index the index to check.
-   * @throws InvalidClassFileException if entry at index is not a ref type.
    */
   private void checkIsRefType( final int index )
-    throws InvalidClassFileException
   {
     final byte entryType = getEntryType( index );
     if( entryType != ClassFileFormat.CONSTANT_Fieldref &&
@@ -356,8 +326,9 @@ public final class ConstantPool
     {
       final String message =
         "Unexpected type for constant pool element " +
-        index + ". Expected a ref type but got " + entryType;
-      throw new InvalidClassFileException( offsets[index], message );
+        index + ". Expected a ref type but got " + entryType +
+        " at position " + offsets[index];
+      throw new ClassFormatError( message );
     }
   }
 
@@ -366,18 +337,16 @@ public final class ConstantPool
    *
    * @param index the index to check.
    * @param type  the expected type.
-   * @throws InvalidClassFileException if entry at index is not of specified type.
    */
   private void checkType( final int index, final int type )
-    throws InvalidClassFileException
   {
     final byte entryType = getEntryType( index );
     if( entryType != type )
     {
       final String message =
-        "Unexpected type for constant pool element " +
-        index + ". Expected: " + type + " Actual: " + entryType;
-      throw new InvalidClassFileException( offsets[index], message );
+        "Unexpected type for constant pool element " + index + ". Expected: " +
+        type + " Actual: " + entryType + " at position " + offsets[index];
+      throw new ClassFormatError( message );
     }
   }
 
@@ -386,10 +355,8 @@ public final class ConstantPool
    * i.e. (index &lt; 1 || index >= offsets.length).
    *
    * @param index the index to check.
-   * @throws InvalidClassFileException if index is not in valid range.
    */
   private void checkRange( final int index )
-    throws InvalidClassFileException
   {
     if( index < 1 || index >= offsets.length )
     {
@@ -397,7 +364,7 @@ public final class ConstantPool
         "Can not access constant pool element " +
         index + " as it is not in the range [1-" +
         offsets .length + ")";
-      throw new InvalidClassFileException( 0, message );
+      throw new ClassFormatError( message );
     }
   }
 
@@ -406,10 +373,8 @@ public final class ConstantPool
    *
    * @param data the data array.
    * @return the newly created ConstantPool.
-   * @throws InvalidClassFileException if data not valid.
    */
   public static ConstantPool parseConstantPool( final byte[] data )
-    throws InvalidClassFileException
   {
     final int constantCount = IOUtil.readUnsignedShort( data, 8 );
     final int[] elements = new int[constantCount];
@@ -421,7 +386,9 @@ public final class ConstantPool
 
       if( index >= data.length )
       {
-        throw new InvalidClassFileException( index, "Class file truncated when parsing constant pool." );
+        final String message =
+          "Class file truncated when parsing constant pool at position " + index;
+        throw new ClassFormatError( message );
       }
       switch( data[index] )
       {
@@ -448,7 +415,9 @@ public final class ConstantPool
           index += 3;
           break;
         default:
-          throw new InvalidClassFileException( index, "Bad constant pool tag " + data[index] );
+          final String message =
+            "Bad constant pool tag " + data[index] + " at position " + index;
+          throw new ClassFormatError( message );
       }
     }
 
