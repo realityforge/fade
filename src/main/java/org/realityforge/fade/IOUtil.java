@@ -19,6 +19,22 @@ class IOUtil
   }
 
   /**
+   * Read in unsigned integer in big-endian order.
+   *
+   * @param data   the data.
+   * @param offset the offset.
+   * @return the value.
+   */
+  static long readUnsignedInteger( final byte[] data, final int offset )
+  {
+    return (
+      ( (long)( data[offset] & 0xff ) << 24 ) +
+      ( (long)( data[offset + 1] & 0xff ) << 16 ) +
+      ( (long)( data[offset + 2] & 0xff ) << 8 ) +
+      ( (long)( data[offset + 3] & 0xff ) ) );
+  }
+
+  /**
    * Read in long in big-endian order.
    *
    * @param data   the data.

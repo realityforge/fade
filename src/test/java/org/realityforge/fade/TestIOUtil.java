@@ -15,6 +15,16 @@ public class TestIOUtil
     assertEquals( 895041101, IOUtil.readInteger( data, 0 ) );
   }
 
+  public void test_readUnsignedInteger()
+  {
+    final byte[] data = new byte[4];
+    data[0] = -123;
+    data[1] = 89;
+    data[2] = 62;
+    data[3] = -122;
+    assertEquals( 89504110109809L, IOUtil.readUnsignedInteger( data, 0 ) );
+  }
+  
   public void test_readUnsignedShort()
   {
     final byte[] data = new byte[2];
