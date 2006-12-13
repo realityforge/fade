@@ -78,10 +78,26 @@ class IOUtil
   {
     if( data.length < offset + required )
     {
-      final String message =
-        "Class file is truncated. Require " + required + " bytes at position " +
-        offset + " when class file is only " + data.length + " bytes long.";
-      throw new ClassFormatError( message );
+      throwTruncatedException( data, offset, required );
     }
+  }
+
+  /**
+   * Throw class file truncated exception.
+   * Method extracted so above method will be inlined but exception
+   * creation will not be and thus will not bloat code.
+   *
+   * @param data     the data.
+   * @param offset   the current offset.
+   * @param required the amount required.
+   */
+  private static void throwTruncatedException( final byte[] data,
+                                               final int offset,
+                                               final long required )
+  {
+    final String message =
+      "Class file is truncated. Require " + required + " bytes at position " +
+      offset + " when class file is only " + data.length + " bytes long.";
+    throw new ClassFormatError( message );
   }
 }
