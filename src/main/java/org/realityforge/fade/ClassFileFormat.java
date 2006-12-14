@@ -89,4 +89,5 @@ public interface ClassFileFormat
   char ANN_TAG_ENUM = 'e';
   char ANN_TAG_CLASS = 'c';
   char ANN_TAG_ANNOTATION = '@';
+  char ANN_TAG_ARRAY = '[';
 }
