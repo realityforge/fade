@@ -77,17 +77,17 @@ public interface ClassFileFormat
   String ATTR_RuntimeInvisibleParameterAnnotations = "RuntimeInvisibleParameterAnnotations"; //Method (We should ignore)
 
   /* Tags used when parsing element value pairs of annotation. */
-  char ANN_TAG_INTEGER = 'I';
-  char ANN_TAG_LONG = 'J';
-  char ANN_TAG_FLOAT = 'F';
-  char ANN_TAG_DOUBLE = 'D';
-  char ANN_TAG_BYTE = 'B';
-  char ANN_TAG_BOOLEAN = 'Z';
-  char ANN_TAG_SHORT = 'S';
-  char ANN_TAG_CHAR = 'C';
-  char ANN_TAG_UTF8 = 's';
-  char ANN_TAG_ENUM = 'e';
-  char ANN_TAG_CLASS = 'c';
-  char ANN_TAG_ANNOTATION = '@';
-  char ANN_TAG_ARRAY = '[';
+  byte ANN_TAG_INTEGER = 'I';
+  byte ANN_TAG_LONG = 'J';
+  byte ANN_TAG_FLOAT = 'F';
+  byte ANN_TAG_DOUBLE = 'D';
+  byte ANN_TAG_BYTE = 'B';
+  byte ANN_TAG_BOOLEAN = 'Z';
+  byte ANN_TAG_SHORT = 'S';
+  byte ANN_TAG_CHAR = 'C';
+  byte ANN_TAG_UTF8 = 's';
+  byte ANN_TAG_ENUM = 'e';
+  byte ANN_TAG_CLASS = 'c';
+  byte ANN_TAG_ANNOTATION = '@';
+  byte ANN_TAG_ARRAY = '[';
 }
