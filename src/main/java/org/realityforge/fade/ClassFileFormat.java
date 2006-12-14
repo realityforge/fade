@@ -75,4 +75,18 @@ public interface ClassFileFormat
   String ATTR_RuntimeInvisibleAnnotations = "RuntimeInvisibleAnnotations"; //Class, Method, Field (We should ignore)
   String ATTR_RuntimeVisibleParameterAnnotations = "RuntimeVisibleParameterAnnotations"; //Method
   String ATTR_RuntimeInvisibleParameterAnnotations = "RuntimeInvisibleParameterAnnotations"; //Method (We should ignore)
+
+  /* Tags used when parsing element value pairs of annotation. */
+  char ANN_TAG_INTEGER = 'I';
+  char ANN_TAG_LONG = 'J';
+  char ANN_TAG_FLOAT = 'F';
+  char ANN_TAG_DOUBLE = 'D';
+  char ANN_TAG_BYTE = 'B';
+  char ANN_TAG_BOOLEAN = 'Z';
+  char ANN_TAG_SHORT = 'S';
+  char ANN_TAG_CHAR = 'C';
+  char ANN_TAG_UTF8 = 's';
+  char ANN_TAG_ENUM = 'e';
+  char ANN_TAG_CLASS = 'c';
+  char ANN_TAG_ANNOTATION = '@';
 }
