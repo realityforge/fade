@@ -3,7 +3,8 @@ package org.realityforge.fade;
 /** Class for parsing class file. */
 public abstract class ClassFileParser
 {
-  private static enum AttributeType
+  /** Thw type of attribute being parsed */
+  static enum AttributeType
   {
     CLASS, METHOD, FIELD, CODE
   }
@@ -55,10 +56,18 @@ public abstract class ClassFileParser
     parseAttributes( AttributeType.METHOD, data, offset + 6, constantPool );
   }
 
-  private void parseAttributes( final AttributeType type,
-                                final byte[] data,
-                                final int baseOffset,
-                                final ConstantPool constantPool )
+  /**
+   * Method to parse attributes.
+   *
+   * @param type         the element associated with attributes.
+   * @param data         the data.
+   * @param baseOffset   the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
+  final void parseAttributes( final AttributeType type,
+                              final byte[] data,
+                              final int baseOffset,
+                              final ConstantPool constantPool )
   {
     final int count = IOUtil.readUnsignedShort( data, baseOffset );
     int offset = baseOffset + 2;

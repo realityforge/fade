@@ -12,6 +12,101 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseAttribute_Code()
+  {
+    verifyParseAttribute( ClassFileParser.AttributeType.CODE );
+  }
+
+  public void test_parseAttribute_Method()
+  {
+    verifyParseAttribute( ClassFileParser.AttributeType.METHOD );
+  }
+
+  public void test_parseAttribute_Field()
+  {
+    verifyParseAttribute( ClassFileParser.AttributeType.FIELD );
+  }
+
+  public void test_parseAttribute_Class()
+  {
+    verifyParseAttribute( ClassFileParser.AttributeType.CLASS );
+  }
+
+  private void verifyParseAttribute( final ClassFileParser.AttributeType type )
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, 2b length, Nb data
+        1, 0, 1, 'a', //name
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //name
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of attributes
+        0, 1, //nameIndex
+        0, 0, 0, 0, //length
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleMethodAttribute( final String name,
+                                            final byte[] p_data,
+                                            final int offset,
+                                            final long length,
+                                            final ConstantPool p_constantPool )
+      {
+        verify( name, p_data, offset, length, p_constantPool );
+      }
+
+      protected void handleCodeAttribute( final String name,
+                                          final byte[] p_data,
+                                          final int offset,
+                                          final long length,
+                                          final ConstantPool p_constantPool )
+      {
+        verify( name, p_data, offset, length, p_constantPool );
+      }
+
+      protected void handleFieldAttribute( final String name,
+                                           final byte[] p_data,
+                                           final int offset,
+                                           final long length,
+                                           final ConstantPool p_constantPool )
+      {
+        verify( name, p_data, offset, length, p_constantPool );
+      }
+
+      protected void handleClassAttribute( final String name,
+                                           final byte[] p_data,
+                                           final int offset,
+                                           final long length,
+                                           final ConstantPool p_constantPool )
+      {
+        verify( name, p_data, offset, length, p_constantPool );
+      }
+
+      private void verify( final String name,
+                           final byte[] p_data,
+                           final int offset,
+                           final long length,
+                           final ConstantPool p_constantPool )
+      {
+        assertEquals( "name", "a", name );
+        assertEquals( "data", data, p_data );
+        assertEquals( "offset", 8, offset );
+        assertEquals( "length", 0L, length );
+        assertEquals( "constantPool", constantPool, p_constantPool );
+      }
+    };
+
+    parser.parseAttributes( type, data, 0, constantPool );
+  }
+
   public void test_parseField()
   {
     final byte[] cpData = new byte[]
@@ -36,26 +131,19 @@ public class TestClassFileParser
         0, 0, //attribute count
       };
 
-    final String[] r_name = new String[1];
-    final String[] r_descriptor = new String[1];
-    final int[] r_accessFlags = new int[1];
-
     final ConcreteParser parser = new ConcreteParser()
     {
       protected void handleField( final String name,
                                   final String descriptor,
                                   final int accessFlags )
       {
-        r_name[0] = name;
-        r_descriptor[0] = descriptor;
-        r_accessFlags[0] = accessFlags;
+        assertEquals( "name", "a", name );
+        assertEquals( "descriptor", "b", descriptor );
+        assertEquals( "accessFlags", 1, accessFlags );
       }
     };
 
     parser.parseField( data, 0, constantPool );
-    assertEquals( "name", "a", r_name[0] );
-    assertEquals( "descriptor", "b", r_descriptor[0] );
-    assertEquals( "accessFlags", 1, r_accessFlags[0] );
   }
 
   public void test_parseMethod()
@@ -82,26 +170,19 @@ public class TestClassFileParser
         0, 0, //attribute count
       };
 
-    final String[] r_name = new String[1];
-    final String[] r_descriptor = new String[1];
-    final int[] r_accessFlags = new int[1];
-
     final ConcreteParser parser = new ConcreteParser()
     {
       protected void handleMethod( final String name,
                                    final String descriptor,
                                    final int accessFlags )
       {
-        r_name[0] = name;
-        r_descriptor[0] = descriptor;
-        r_accessFlags[0] = accessFlags;
+        assertEquals( "name", "a", name );
+        assertEquals( "descriptor", "b", descriptor );
+        assertEquals( "accessFlags", 1, accessFlags );
       }
     };
 
     parser.parseMethod( data, 0, constantPool );
-    assertEquals( "name", "a", r_name[0] );
-    assertEquals( "descriptor", "b", r_descriptor[0] );
-    assertEquals( "accessFlags", 1, r_accessFlags[0] );
   }
 
   public void test_handleInnerClass_throws_UnimplementedException()
