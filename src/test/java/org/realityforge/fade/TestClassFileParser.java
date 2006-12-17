@@ -25,15 +25,15 @@ public class TestClassFileParser
       {
         0, //ignored
         0, //name
-        4 //descriptor
+        4, //descriptor
       };
     final ConstantPool constantPool = new ConstantPool( cpData, offsets );
     final byte[] data = new byte[]
       {
-        0, 1,// accessFlags
-        0, 1,// nameIndex
-        0, 2,// descriptorIndex
-        0, 0,// field count
+        0, 1, //accessFlags
+        0, 1, //nameIndex
+        0, 2, //descriptorIndex
+        0, 0, //attribute count
       };
 
     final String[] r_name = new String[1];
@@ -53,6 +53,52 @@ public class TestClassFileParser
     };
 
     parser.parseField( data, 0, constantPool );
+    assertEquals( "name", "a", r_name[0] );
+    assertEquals( "descriptor", "b", r_descriptor[0] );
+    assertEquals( "accessFlags", 1, r_accessFlags[0] );
+  }
+
+  public void test_parseMethod()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, 2b length, Nb data
+        1, 0, 1, 'a', //name
+        1, 0, 1, 'b', //descriptor
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //name
+        4, //descriptor
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //accessFlags
+        0, 1, //nameIndex
+        0, 2, //descriptorIndex
+        0, 0, //attribute count
+      };
+
+    final String[] r_name = new String[1];
+    final String[] r_descriptor = new String[1];
+    final int[] r_accessFlags = new int[1];
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleMethod( final String name,
+                                   final String descriptor,
+                                   final int accessFlags )
+      {
+        r_name[0] = name;
+        r_descriptor[0] = descriptor;
+        r_accessFlags[0] = accessFlags;
+      }
+    };
+
+    parser.parseMethod( data, 0, constantPool );
     assertEquals( "name", "a", r_name[0] );
     assertEquals( "descriptor", "b", r_descriptor[0] );
     assertEquals( "accessFlags", 1, r_accessFlags[0] );
