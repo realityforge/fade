@@ -16,8 +16,8 @@ public abstract class ClassFileParser
   }
 
   final void parseField( final byte[] data,
-                                   final int offset,
-                                   final ConstantPool constantPool )
+                         final int offset,
+                         final ConstantPool constantPool )
   {
     final int accessFlags = IOUtil.readUnsignedShort( data, offset );
     final int nameIndex = IOUtil.readUnsignedShort( data, offset + 2 );
