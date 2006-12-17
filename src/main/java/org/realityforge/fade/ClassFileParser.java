@@ -9,8 +9,8 @@ public abstract class ClassFileParser
   }
 
   final void parseClassAttributes( final byte[] data,
-                                             final int offset,
-                                             final ConstantPool constantPool )
+                                   final int offset,
+                                   final ConstantPool constantPool )
   {
     parseAttributes( AttributeType.CLASS, data, offset, constantPool );
   }
@@ -29,8 +29,8 @@ public abstract class ClassFileParser
   }
 
   final void parseMethod( final byte[] data,
-                                    final int offset,
-                                    final ConstantPool constantPool )
+                          final int offset,
+                          final ConstantPool constantPool )
   {
     final int accessFlags = IOUtil.readUnsignedShort( data, offset );
     final int nameIndex = IOUtil.readUnsignedShort( data, offset + 2 );
@@ -611,17 +611,13 @@ public abstract class ClassFileParser
     handleInnerClass( innerClass, outerClass, innerName, innerClassAccessFlags );
   }
 
-  /**
-   * Subclasses override method to handle synthetic attribute.
-   */
+  /** Subclasses override method to handle synthetic attribute. */
   protected void handleSynthetic()
   {
     throw newUnimplementedException();
   }
 
-  /**
-   * Subclasses override method to handle deprecated attribute.
-   */
+  /** Subclasses override method to handle deprecated attribute. */
   protected void handleDeprecated()
   {
     throw newUnimplementedException();
@@ -630,9 +626,9 @@ public abstract class ClassFileParser
   /**
    * Subclasses override to handle InnerClass attribute.
    *
-   * @param innerClass the inner class.
-   * @param outerClass the outer class.
-   * @param innerName the name used in source. (For anonymous types).
+   * @param innerClass            the inner class.
+   * @param outerClass            the outer class.
+   * @param innerName             the name used in source. (For anonymous types).
    * @param innerClassAccessFlags the access flags for inner class.
    */
   protected void handleInnerClass( final String innerClass,
@@ -656,7 +652,7 @@ public abstract class ClassFileParser
   /**
    * Subclasses overide to handle EnclosingMethod attribute.
    *
-   * @param klass the outer type.
+   * @param klass      the outer type.
    * @param methodName the method name.
    * @param methodType the inner type.
    */
@@ -707,9 +703,7 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
-  /**
-   * Subclasses override method to receive notification when annotation parsing completes.
-   */
+  /** Subclasses override method to receive notification when annotation parsing completes. */
   protected void endAnnotation()
   {
     throw newUnimplementedException();
@@ -718,7 +712,7 @@ public abstract class ClassFileParser
   /**
    * Subclasses override to key-value in annotation.
    *
-   * @param name the key.
+   * @param name  the key.
    * @param value the value.
    */
   protected void handleAnnotationValue( final String name, final Object value )
@@ -729,8 +723,8 @@ public abstract class ClassFileParser
   /**
    * Subclasses override to key-value in annotation where value is an enum.
    *
-   * @param name the key.
-   * @param key the type of enum.
+   * @param name  the key.
+   * @param key   the type of enum.
    * @param value the value.
    */
   protected void handleAnnotationEnumValue( final String name,
@@ -740,9 +734,7 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
-  /**
-   * Subclasses override method to receive notification when end of annotation value array is parsed.
-   */
+  /** Subclasses override method to receive notification when end of annotation value array is parsed. */
   protected void endAnnotationValueArray()
   {
     throw newUnimplementedException();
@@ -751,7 +743,7 @@ public abstract class ClassFileParser
   /**
    * Subclasses override to receive notification when array value for annotation starts to be parsed.
    *
-   * @param name the name of key or null if nested array.
+   * @param name   the name of key or null if nested array.
    * @param length the number of elements in array.
    */
   protected void startAnnotationValueArray( final String name, final int length )
@@ -782,10 +774,10 @@ public abstract class ClassFileParser
   /**
    * Subclasses overide to handle code attribute.
    *
-   * @param maxStack the max stack size in words.
-   * @param maxLocals the max local count.
-   * @param data the data containing bytecode.
-   * @param offset the offset into data when bytecode starts.
+   * @param maxStack   the max stack size in words.
+   * @param maxLocals  the max local count.
+   * @param data       the data containing bytecode.
+   * @param offset     the offset into data when bytecode starts.
    * @param codeLength the length of bytecode in bytes.
    */
   protected void startCode( final int maxStack,
@@ -800,8 +792,8 @@ public abstract class ClassFileParser
   /**
    * Subclasses override to handle exception handlers.
    *
-   * @param startPC the start of range exception handler covers.
-   * @param endPC the end of range exception handler covers.
+   * @param startPC   the start of range exception handler covers.
+   * @param endPC     the end of range exception handler covers.
    * @param handlerPC the location of handler.
    * @param catchType null if finally else classname of exception caught.
    */
@@ -831,9 +823,7 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
-  /**
-   * Subclasses override method to receive notification when code attribute has completed parsing.
-   */
+  /** Subclasses override method to receive notification when code attribute has completed parsing. */
   protected void endCode()
   {
     throw newUnimplementedException();
