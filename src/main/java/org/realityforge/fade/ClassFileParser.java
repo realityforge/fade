@@ -216,16 +216,9 @@ public abstract class ClassFileParser
     handleAnnotationGroup( type );
     final int count = IOUtil.readUnsignedShort( data, offset );
     int location = offset + 2;
-    try
+    for( int i = 0; i < count; i++ )
     {
-      for( int i = 0; i < count; i++ )
-      {
-        location = parseAnnotation( data, location, constantPool );
-      }
-    }
-    catch( IllegalStateException e )
-    {
-      System.err.println( "Skipping array due to " + e.getMessage() );
+      location = parseAnnotation( data, location, constantPool );
     }
   }
 
