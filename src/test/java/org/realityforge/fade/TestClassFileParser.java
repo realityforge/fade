@@ -11,7 +11,7 @@ public class TestClassFileParser
     extends ClassFileParser
   {
   }
-  
+
   public void test_parseConstantValue_with_invalid_type()
   {
     final byte[] cpData = new byte[]
@@ -272,6 +272,40 @@ public class TestClassFileParser
         assertEquals( "klass", "a", klass );
         assertEquals( "methodName", "b", methodName );
         assertEquals( "methodType", "c", methodType );
+      }
+    };
+
+    parser.parseEnclosingMethod( data, 0, constantPool );
+  }
+
+  public void test_parseEnclosingMethod_with_null_method()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //klass
+        7, 0, 1,//class to klass
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //klass
+        4, //methodName
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 2, //klass
+        0, 0, //NameType
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleEnclosingMethod( final String klass, final String methodName, final String methodType )
+      {
+        assertEquals( "klass", "a", klass );
+        assertEquals( "methodName", null, methodName );
+        assertEquals( "methodType", null, methodType );
       }
     };
 
