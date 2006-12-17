@@ -39,7 +39,39 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
+  }
+
+  public void test_parseElementValue_expecting_Boolean_False()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 0 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'Z', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", Boolean.FALSE, value );
+      }
+    };
+
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_byte()
@@ -69,7 +101,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Char()
@@ -99,7 +132,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Short()
@@ -129,7 +163,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Integer()
@@ -159,7 +194,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Float()
@@ -189,7 +225,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Long()
@@ -219,7 +256,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Double()
@@ -249,7 +287,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_UTF()
@@ -279,7 +318,8 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
 
   public void test_parseElementValue_expecting_Class()
@@ -309,8 +349,45 @@ public class TestClassFileParser
       }
     };
 
-    parser.parseElementValue( "han", data, 0, constantPool );
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
   }
+
+  public void test_parseElementValue_expecting_Enum()
+  {
+    final byte[] cpData = new byte[]
+      {
+        1, 0, 1, 'a', //key
+        1, 0, 1, 'b', //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+        4, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'e',
+        0, 1, //key index
+        0, 2, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationEnumValue( final String name, final String key, final String value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", "a", key );
+        assertEquals( "value", "b", value );
+      }
+    };
+
+    final int location = parser.parseElementValue( "han", data, 0, constantPool );
+    assertEquals( "location", data.length, location );
+  }
+
 
   public void test_parseElementValue_with_bad_tag()
   {
