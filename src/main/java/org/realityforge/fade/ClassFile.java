@@ -221,6 +221,22 @@ public class ClassFile
     return IOUtil.readUnsignedShort( data, 6 );
   }
 
+  public void processClass( final ClassFileParser parser,
+                            final boolean parseFields,
+                            final boolean parseMethods,
+                            final boolean parseClassAttributes )
+  {
+    for( final int offset : fieldOffsets )
+    {
+      parser.parseField( data, offset, constantPool );
+    }
+    for( final int offset : methodOffsets )
+    {
+      parser.parseMethod( data, offset, constantPool );
+    }
+    parser.parseClassAttributes( data, attributeOffset, constantPool );
+  }
+
   /**
    * Parse Constant Pool.
    * The array is now owned by ConstantPool object and should not be modified
@@ -285,8 +301,8 @@ public class ClassFile
   /**
    * Parse field_info section.
    *
-   * @param data the bytes.
-   * @param baseOffset the offset to start parsing from.
+   * @param data         the bytes.
+   * @param baseOffset   the offset to start parsing from.
    * @param fieldOffsets the array to store offsets of field_infos.
    * @return the position after last field is parsed.
    */
@@ -308,8 +324,8 @@ public class ClassFile
   /**
    * Parse method_info section.
    *
-   * @param data the bytes.
-   * @param baseOffset the offset to start parsing from.
+   * @param data          the bytes.
+   * @param baseOffset    the offset to start parsing from.
    * @param methodOffsets the array to store offsets of method_infos.
    * @return the position after last method is parsed.
    */
@@ -331,9 +347,9 @@ public class ClassFile
   /**
    * Parse attribute section.
    *
-   * @param data the bytes.
+   * @param data   the bytes.
    * @param offset the offset to start parsing from.
-   * @param count the number of attributes expected.
+   * @param count  the number of attributes expected.
    * @return the position after last attribute is parsed.
    */
   private static int parseAttributes( final byte[] data, int offset, int count )
