@@ -594,6 +594,13 @@ public abstract class ClassFileParser
     }
   }
 
+  /**
+   * Parse Signature attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseSignature( final byte[] data, final int offset, final ConstantPool constantPool )
   {
     final int index = IOUtil.readUnsignedShort( data, offset );
@@ -601,6 +608,13 @@ public abstract class ClassFileParser
     handleSignature( utfEntry );
   }
 
+  /**
+   * Parse EnclosingMethod attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseEnclosingMethod( final byte[] data, final int offset, final ConstantPool constantPool )
   {
     final int classIndex = IOUtil.readUnsignedShort( data, offset );

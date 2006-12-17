@@ -12,6 +12,76 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseEnclosingMethod()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //klass
+        1, 0, 1, 'b', //methodName
+        1, 0, 1, 'c', //methodType
+        7, 0, 1,//class to klass
+        12, 0, 2, 0, 3,//NameType
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //klass
+        4, //methodName
+        8, //methodType
+        12, //class to klass
+        15, //NameType
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 4, //klass
+        0, 5, //NameType
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleEnclosingMethod( final String klass, final String methodName, final String methodType )
+      {
+        assertEquals( "klass", "a", klass );
+        assertEquals( "methodName", "b", methodName );
+        assertEquals( "methodType", "c", methodType );
+      }
+    };
+
+    parser.parseEnclosingMethod( data, 0, constantPool );
+  }
+
+  public void test_parseSignature()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //innerClass
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //signature
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //signature index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleSignature( final String signature )
+      {
+        assertEquals( "signature", "a", signature );
+      }
+    };
+
+    parser.parseSignature( data, 0, constantPool );
+  }
+
   public void test_parseInnerClassElement()
   {
     final byte[] cpData = new byte[]
