@@ -147,6 +147,13 @@ public abstract class ClassFileParser
     endCode();
   }
 
+  /**
+   * Method that parses Exceptions attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseExceptions( final byte[] data,
                                         final int offset,
                                         final ConstantPool constantPool )

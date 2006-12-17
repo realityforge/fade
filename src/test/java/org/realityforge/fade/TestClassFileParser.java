@@ -342,6 +342,45 @@ public class TestClassFileParser
     parser.parseSignature( data, 0, constantPool );
   }
 
+  public void test_parseExceptions()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //exception 1
+        1, 0, 1, 'b', //exception 2
+        7, 0, 1, //class to exception 1
+        7, 0, 2, //class to exception 2
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //exception 1
+        4, //exception 2
+        8, //class to exception 1
+        11, //class to exception 2
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 2, //count
+        0, 3, //exception 1 index
+        0, 4, //exception 2 index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleExceptions( final String[] exceptions )
+      {
+        assertEquals( "exceptions.length", 2, exceptions.length );
+        assertEquals( "exceptions[0]", "a", exceptions[0] );
+        assertEquals( "exceptions[1]", "b", exceptions[1] );
+      }
+    };
+
+    parser.parseExceptions( data, 0, constantPool );
+  }
+
   public void test_parseInnerClassElement()
   {
     final byte[] cpData = new byte[]
