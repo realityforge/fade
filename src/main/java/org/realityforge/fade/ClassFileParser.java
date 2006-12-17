@@ -103,6 +103,13 @@ public abstract class ClassFileParser
     }
   }
 
+  /**
+   * Method that parses Code attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseCode( final byte[] data,
                                   final int offset,
                                   final ConstantPool constantPool )

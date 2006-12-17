@@ -342,6 +342,178 @@ public class TestClassFileParser
     parser.parseSignature( data, 0, constantPool );
   }
 
+  public void test_parseCode()
+  {
+    /*
+    final int maxStack = IOUtil.readUnsignedShort( data, offset );
+    final int maxLocals = IOUtil.readUnsignedShort( data, offset + 2 );
+    final long codeLength = IOUtil.readUnsignedInteger( data, offset + 4 );
+    startCode( maxStack, maxLocals, data, offset + 8, codeLength );
+    int location = (int)( offset + codeLength + 8 );
+    final int exceptionHandlerCount = IOUtil.readUnsignedShort( data, location );
+    location += 2;
+    for( int i = 0; i < exceptionHandlerCount; i++ )
+    {
+      final int startPC = IOUtil.readUnsignedShort( data, location );
+      final int endPC = IOUtil.readUnsignedShort( data, location + 2 );
+      final int handlerPC = IOUtil.readUnsignedShort( data, location + 4 );
+      final int catchTypeIndex = IOUtil.readUnsignedShort( data, location + 6 );
+      final String catchType;
+      if( 0 != catchTypeIndex )
+      {
+        catchType = constantPool.getClassEntry( catchTypeIndex );
+      }
+      else
+      {
+        catchType = null;
+      }
+      handleExceptionHandler( startPC, endPC, handlerPC, catchType );
+      location += 8;
+    }
+
+    final int attributeCount = IOUtil.readUnsignedShort( data, location );
+    location += 2;
+    for( int i = 0; i < attributeCount; i++ )
+    {
+      final int nameIndex = IOUtil.readUnsignedShort( data, location );
+      final String name = constantPool.getUtfEntry( nameIndex );
+      final long length = IOUtil.readUnsignedInteger( data, location + 2 );
+      location += 6;
+      handleCodeAttribute( name, data, location, length, constantPool );
+      location += length;
+    }
+    endCode();
+
+    */
+
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //exception 1
+        7, 0, 1, //class to exception 1
+        1, 0, 1, 'b', //attribute name
+        1, 0, 1, 'c', //attribute name
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //exception 1
+        4, //exception 2
+        7, //attribute name
+        11, //attribute name
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 2, //maxStack
+        0, 3, //maxLocals
+        0, 0, 0, 1, //codeLength
+        0, //code
+        0, 2, //exception handler count
+        //exception handler 1
+        0, 1, //start pc
+        0, 2, //end pc
+        0, 3, //handler pc
+        0, 0, //catchTypeIndex
+        //exception handler 2
+        0, 1, //start pc
+        0, 2, //end pc
+        0, 3, //handler pc
+        0, 2, //catchTypeIndex
+        0, 2, //attribute count
+        0, 3, //attribute name index
+        0, 0, 0, 1, //attribute length
+        0, //attribute data
+        0, 4, //attribute name index
+        0, 0, 0, 0, //attribute length
+      };
+
+    /*
+final int nameIndex = IOUtil.readUnsignedShort( data, location );
+      final String name = constantPool.getUtfEntry( nameIndex );
+      final long length = IOUtil.readUnsignedInteger( data, location + 2 );
+      location += 6;
+      handleCodeAttribute( name, data, location, length, constantPool );
+
+    */
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      boolean codeStarted;
+      int exception;
+      int attribute;
+
+      protected void startCode( final int maxStack,
+                                final int maxLocals,
+                                final byte[] p_data,
+                                final int offset,
+                                final long codeLength )
+      {
+        assertEquals( "maxStack", 2, maxStack );
+        assertEquals( "maxLocals", 3, maxLocals );
+        assertEquals( "data", data, p_data );
+        assertEquals( "offset", 8, offset );
+        assertEquals( "codeLength", 1, codeLength );
+        assertFalse( "codeStarted in startCode", codeStarted );
+        codeStarted = true;
+      }
+
+      protected void handleExceptionHandler( final int startPC,
+                                             final int endPC,
+                                             final int handlerPC,
+                                             final String catchType )
+      {
+        exception ++;
+        assertTrue( "codeStarted in handleExceptionHandler " + exception, codeStarted );
+        if( 1 == exception )
+        {
+          assertNull( "catchType", catchType );
+        }
+        else
+        {
+          assertNotNull( "catchType", catchType );
+        }
+        assertEquals( "startPC", 1, startPC );
+        assertEquals( "endPC", 2, endPC );
+        assertEquals( "handlerPC", 3, handlerPC );
+      }
+
+      protected void handleCodeAttribute( final String name,
+                                          final byte[] p_data,
+                                          final int offset,
+                                          final long length,
+                                          final ConstantPool p_constantPool )
+      {
+        attribute++;
+        assertTrue( "codeStarted in handleCodeAttribute " + attribute, codeStarted );
+        if( 1 == attribute )
+        {
+          assertEquals( "name", "b", name );
+          assertEquals( "data", data, p_data );
+          assertEquals( "offset", 35, offset );
+          assertEquals( "length", 1, length );
+          assertEquals( "constantPool", constantPool, p_constantPool );
+        }
+        else
+        {
+          assertEquals( "name", "c", name );
+          assertEquals( "data", data, p_data );
+          assertEquals( "offset", 42, offset );
+          assertEquals( "length", 0, length );
+          assertEquals( "constantPool", constantPool, p_constantPool );
+        }
+      }
+
+      protected void endCode()
+      {
+        assertTrue( "codeStarted in endCode", codeStarted );
+        codeStarted = false;
+      }
+    };
+
+    parser.parseCode( data, 0, constantPool );
+  }
+
   public void test_parseExceptions()
   {
     final byte[] cpData = new byte[]
