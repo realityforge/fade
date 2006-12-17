@@ -163,6 +163,13 @@ public abstract class ClassFileParser
     handleExceptions( exceptions );
   }
 
+  /**
+   * Method that parses Deprecated attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param length the length of attribute.
+   */
   protected final void parseDeprecated( final byte[] data,
                                         final int offset,
                                         final long length )
@@ -176,6 +183,14 @@ public abstract class ClassFileParser
     handleDeprecated();
   }
 
+
+  /**
+   * Method that parses Synthetic attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param length the length of attribute.
+   */
   protected final void parseSynthetic( final byte[] data,
                                        final int offset,
                                        final long length )

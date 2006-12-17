@@ -12,6 +12,66 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseDeprecated_withBadLength()
+  {
+    try
+    {
+      new ConcreteParser().parseDeprecated( new byte[0], 0, 1 );
+      fail( "Expected to get throw an exception");
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "Deprecated attribute with non-zero length at position 0";
+      assertEquals( "cfe.getMessage()", message, cfe.getMessage() );
+    }
+  }
+
+  public void test_parseDeprecated()
+  {
+    final boolean[] success = new boolean[1];
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleDeprecated()
+      {
+        success[0] = true;
+      }
+    };
+
+    parser.parseDeprecated( new byte[0], 0, 0 );
+    assertTrue( "deprecated", success[0] );
+  }
+
+  public void test_parseSynthetic_withBadLength()
+  {
+    try
+    {
+      new ConcreteParser().parseSynthetic( new byte[0], 0, 1 );
+      fail( "Expected to get throw an exception");
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "Synthetic attribute with non-zero length at position 0";
+      assertEquals( "cfe.getMessage()", message, cfe.getMessage() );
+    }
+  }
+
+  public void test_parseSynthetic()
+  {
+    final boolean[] success = new boolean[1];
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleSynthetic()
+      {
+        success[0] = true;
+      }
+    };
+
+    parser.parseSynthetic( new byte[0], 0, 0 );
+    assertTrue( "Synthetic", success[0] );
+  }
+
   public void test_parseClassAttributes()
   {
     final byte[] cpData = new byte[]
