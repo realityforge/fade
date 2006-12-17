@@ -183,7 +183,6 @@ public abstract class ClassFileParser
     handleDeprecated();
   }
 
-
   /**
    * Method that parses Synthetic attribute.
    *
@@ -204,6 +203,13 @@ public abstract class ClassFileParser
     handleSynthetic();
   }
 
+  /**
+   * Method that parses ConstantValue attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseConstantValue( final byte[] data,
                                            final int offset,
                                            final ConstantPool constantPool )
@@ -236,6 +242,13 @@ public abstract class ClassFileParser
     handleConstantValue( value );
   }
 
+  /**
+   * Method that parses SourceDebug attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param length the length of attribute.
+   */
   protected final void parseSourceDebug( final byte[] data,
                                          final int offset,
                                          final long length )
@@ -244,6 +257,13 @@ public abstract class ClassFileParser
     handleSourceDebug( value );
   }
 
+  /**
+   * Method that parses SourceDebug attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseSourceFile( final byte[] data,
                                         final int offset,
                                         final ConstantPool constantPool )

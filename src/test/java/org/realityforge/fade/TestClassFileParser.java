@@ -11,6 +11,232 @@ public class TestClassFileParser
     extends ClassFileParser
   {
   }
+  
+  public void test_parseConstantValue_with_invalid_type()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        42, 0, 2, //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser();
+    try
+    {
+      parser.parseConstantValue( data, 0, constantPool );
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "ConstantValue attribute at 0 references constant pool value of type 42";
+      assertEquals( "cfe.getMessage()", message, cfe.getMessage() );
+
+    }
+  }
+
+  public void test_parseConstantValue_expecting_String()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        8, 0, 2, //value
+        1, 0, 1, 'a' //string
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+        3, //string
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleConstantValue( final Object value )
+      {
+        assertEquals( "value", "a", value );
+      }
+    };
+
+    parser.parseConstantValue( data, 0, constantPool );
+  }
+
+  public void test_parseConstantValue_expecting_Double()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        6, 0, 0, 0, 0, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleConstantValue( final Object value )
+      {
+        assertEquals( "value", Double.longBitsToDouble( 42L ), value );
+      }
+    };
+
+    parser.parseConstantValue( data, 0, constantPool );
+  }
+
+  public void test_parseConstantValue_expecting_Long()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        5, 0, 0, 0, 0, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleConstantValue( final Object value )
+      {
+        assertEquals( "value", 42L, value );
+      }
+    };
+
+    parser.parseConstantValue( data, 0, constantPool );
+  }
+
+  public void test_parseConstantValue_expecting_Float()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        4, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleConstantValue( final Object value )
+      {
+        assertEquals( "value", Float.intBitsToFloat( 42 ), value );
+      }
+    };
+
+    parser.parseConstantValue( data, 0, constantPool );
+  }
+
+  public void test_parseConstantValue_expecting_Integer()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleConstantValue( final Object value )
+      {
+        assertEquals( "value", 42, value );
+      }
+    };
+
+    parser.parseConstantValue( data, 0, constantPool );
+  }
+
+  public void test_parseSourceFile()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //klass
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //filename
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //filename
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleSourceFile( final String filename )
+      {
+        assertEquals( "filename", "a", filename );
+      }
+    };
+
+    parser.parseSourceFile( data, 0, constantPool );
+  }
+
+  public void test_parseSourceDebug()
+  {
+    final byte[] data = new byte[]
+      {
+        'a'
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleSourceDebug( final String value )
+      {
+        assertEquals( "value", "a", value );
+      }
+    };
+
+    parser.parseSourceDebug( data, 0, 1 );
+  }
 
   public void test_parseEnclosingMethod()
   {
@@ -279,7 +505,7 @@ public class TestClassFileParser
     try
     {
       new ConcreteParser().parseDeprecated( new byte[0], 0, 1 );
-      fail( "Expected to get throw an exception");
+      fail( "Expected to get throw an exception" );
     }
     catch( final ClassFormatError cfe )
     {
@@ -309,7 +535,7 @@ public class TestClassFileParser
     try
     {
       new ConcreteParser().parseSynthetic( new byte[0], 0, 1 );
-      fail( "Expected to get throw an exception");
+      fail( "Expected to get throw an exception" );
     }
     catch( final ClassFormatError cfe )
     {
@@ -549,36 +775,36 @@ public class TestClassFileParser
 
   public void test_handleInnerClass_throws_UnimplementedException()
   {
-    final Class[] types = new Class[]{String.class,String.class,String.class,Integer.TYPE};
-    final Object[] args = new Object[]{"","","",0};
+    final Class[] types = new Class[]{String.class, String.class, String.class, Integer.TYPE};
+    final Object[] args = new Object[]{"", "", "", 0};
     verifyUnimplementedMethod( "handleInnerClass", types, args );
   }
 
   public void test_handleEnclosingMethod_throws_UnimplementedException()
   {
-    final Class[] types = new Class[]{String.class,String.class,String.class};
-    final Object[] args = new Object[]{"","",""};
+    final Class[] types = new Class[]{String.class, String.class, String.class};
+    final Object[] args = new Object[]{"", "", ""};
     verifyUnimplementedMethod( "handleEnclosingMethod", types, args );
   }
 
   public void test_handleAnnotationEnumValue_throws_UnimplementedException()
   {
-    final Class[] types = new Class[]{String.class,String.class,String.class};
-    final Object[] args = new Object[]{"","",""};
+    final Class[] types = new Class[]{String.class, String.class, String.class};
+    final Object[] args = new Object[]{"", "", ""};
     verifyUnimplementedMethod( "handleAnnotationEnumValue", types, args );
   }
 
   public void test_handleAnnotationValue_throws_UnimplementedException()
   {
-    final Class[] types = new Class[]{String.class,Object.class};
-    final Object[] args = new Object[]{"",0};
+    final Class[] types = new Class[]{String.class, Object.class};
+    final Object[] args = new Object[]{"", 0};
     verifyUnimplementedMethod( "handleAnnotationValue", types, args );
   }
 
   public void test_startAnnotationValueArray_throws_UnimplementedException()
   {
-    final Class[] types = new Class[]{String.class,Integer.TYPE};
-    final Object[] args = new Object[]{"",0};
+    final Class[] types = new Class[]{String.class, Integer.TYPE};
+    final Object[] args = new Object[]{"", 0};
     verifyUnimplementedMethod( "startAnnotationValueArray", types, args );
   }
 
