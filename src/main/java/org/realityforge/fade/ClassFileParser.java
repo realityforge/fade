@@ -9,6 +9,13 @@ public abstract class ClassFileParser
     CLASS, METHOD, FIELD, CODE
   }
 
+  /**
+   * Method to parse class attributes.
+   *
+   * @param data         the data.
+   * @param offset       the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   final void parseClassAttributes( final byte[] data,
                                    final int offset,
                                    final ConstantPool constantPool )

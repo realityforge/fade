@@ -12,6 +12,46 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseClassAttributes()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, 2b length, Nb data
+        1, 0, 1, 'a', //name
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //name
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of attributes
+        0, 1, //nameIndex
+        0, 0, 0, 0, //length
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleClassAttribute( final String name,
+                                           final byte[] p_data,
+                                           final int offset,
+                                           final long length,
+                                           final ConstantPool p_constantPool )
+      {
+        assertEquals( "name", "a", name );
+        assertEquals( "data", data, p_data );
+        assertEquals( "offset", 8, offset );
+        assertEquals( "length", 0L, length );
+        assertEquals( "constantPool", constantPool, p_constantPool );
+      }
+
+    };
+
+    parser.parseClassAttributes( data, 0, constantPool );
+  }
+
   public void test_parseAttribute_Code()
   {
     verifyParseAttribute( ClassFileParser.AttributeType.CODE );
