@@ -15,6 +15,13 @@ public abstract class ClassFileParser
     parseAttributes( AttributeType.CLASS, data, offset, constantPool );
   }
 
+  /**
+   * Method that parses field data.
+   *
+   * @param data         the data.
+   * @param offset       the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   final void parseField( final byte[] data,
                          final int offset,
                          final ConstantPool constantPool )
@@ -28,6 +35,13 @@ public abstract class ClassFileParser
     parseAttributes( AttributeType.FIELD, data, offset + 6, constantPool );
   }
 
+  /**
+   * Method that parses method data.
+   *
+   * @param data         the data.
+   * @param offset       the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   final void parseMethod( final byte[] data,
                           final int offset,
                           final ConstantPool constantPool )
