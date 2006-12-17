@@ -599,13 +599,20 @@ public abstract class ClassFileParser
     return location;
   }
 
-  private void checkTag( final byte arrayTag, final byte[] data, final int location )
+  /**
+   * Check type for array tag and if not the same then throw an exception.
+   *
+   * @param arrayTag the expected array type.
+   * @param data the data array.
+   * @param offset the offset of next tag.
+   */
+  final void checkTag( final byte arrayTag, final byte[] data, final int offset )
   {
-    if( arrayTag != data[location] )
+    if( arrayTag != data[offset] )
     {
       final String message =
-        "Bad type for array tag in annotation at position " + location +
-        ". Expected: " + arrayTag + " Actual: " + data[location];
+        "Bad type for array tag in annotation at position " + offset +
+        ". Expected: " + arrayTag + " Actual: " + data[offset];
       throw new ClassFormatError( message );
     }
   }

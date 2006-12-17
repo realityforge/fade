@@ -12,6 +12,26 @@ public class TestClassFileParser
   {
   }
 
+  public void test_checkTag_bad_throws_exception()
+  {
+    try
+    {
+      new ConcreteParser().checkTag( (byte)0, new byte[]{1}, 0 );
+      fail( "expected to throw an exception" );
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "Bad type for array tag in annotation at position 0. Expected: 0 Actual: 1";
+      assertEquals( "cfe.getMessage()", message, cfe.getMessage() );
+    }
+  }
+
+  public void test_checkTag_ok()
+  {
+    new ConcreteParser().checkTag( (byte)'a', new byte[]{'a'}, 0 );
+  }
+
   public void test_parseConstantValue_with_invalid_type()
   {
     final byte[] cpData = new byte[]
