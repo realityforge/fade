@@ -226,15 +226,24 @@ public class ClassFile
                             final boolean parseMethods,
                             final boolean parseClassAttributes )
   {
-    for( final int offset : fieldOffsets )
+    if( parseFields )
     {
-      parser.parseField( data, offset, constantPool );
+      for( final int offset : fieldOffsets )
+      {
+        parser.parseField( data, offset, constantPool );
+      }
     }
-    for( final int offset : methodOffsets )
+    if( parseMethods )
     {
-      parser.parseMethod( data, offset, constantPool );
+      for( final int offset : methodOffsets )
+      {
+        parser.parseMethod( data, offset, constantPool );
+      }
     }
-    parser.parseClassAttributes( data, attributeOffset, constantPool );
+    if( parseClassAttributes )
+    {
+      parser.parseClassAttributes( data, attributeOffset, constantPool );
+    }
   }
 
   /**
