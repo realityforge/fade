@@ -618,16 +618,30 @@ public abstract class ClassFileParser
     handleInnerClass( innerClass, outerClass, innerName, innerClassAccessFlags );
   }
 
+  /**
+   * Subclasses override method to handle synthetic attribute.
+   */
   protected void handleSynthetic()
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle deprecated attribute.
+   */
   protected void handleDeprecated()
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle InnerClass attribute.
+   *
+   * @param innerClass the inner class.
+   * @param outerClass the outer class.
+   * @param innerName the name used in source. (For anonymous types).
+   * @param innerClassAccessFlags the access flags for inner class.
+   */
   protected void handleInnerClass( final String innerClass,
                                    final String outerClass,
                                    final String innerName,
@@ -636,11 +650,23 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle Signature attribute.
+   *
+   * @param signature the signature.
+   */
   protected void handleSignature( final String signature )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses overide to handle EnclosingMethod attribute.
+   *
+   * @param klass the outer type.
+   * @param methodName the method name.
+   * @param methodType the inner type.
+   */
   protected void handleEnclosingMethod( final String klass,
                                         final String methodName,
                                         final String methodType )
@@ -648,36 +674,72 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
-  protected void handleSourceFile( final String utfEntry )
+  /**
+   * Subclasses override to handle SourceFile attribute.
+   *
+   * @param filename the filename.
+   */
+  protected void handleSourceFile( final String filename )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle SourceDebug attribute.
+   *
+   * @param value the debug value.
+   */
   protected void handleSourceDebug( final String value )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle start parsing annotation attribute.
+   *
+   * @param type the name of attribute.
+   */
   protected void handleAnnotationGroup( final String type )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle start of annotation parsing.
+   *
+   * @param type the name of annotation.
+   */
   protected void startAnnotation( final String type )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to receive notification when annotation parsing completes.
+   */
   protected void endAnnotation()
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to key-value in annotation.
+   *
+   * @param name the key.
+   * @param value the value.
+   */
   protected void handleAnnotationValue( final String name, final Object value )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to key-value in annotation where value is an enum.
+   *
+   * @param name the key.
+   * @param key the type of enum.
+   * @param value the value.
+   */
   protected void handleAnnotationEnumValue( final String name,
                                             final String key,
                                             final String value )
@@ -685,26 +747,54 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to receive notification when end of annotation value array is parsed.
+   */
   protected void endAnnotationValueArray()
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to receive notification when array value for annotation starts to be parsed.
+   *
+   * @param name the name of key or null if nested array.
+   * @param length the number of elements in array.
+   */
   protected void startAnnotationValueArray( final String name, final int length )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle ConstantValue attribute.
+   *
+   * @param value the value.
+   */
   protected void handleConstantValue( final Object value )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle exceptions attribute.
+   *
+   * @param exceptions an array of exception class names.
+   */
   protected void handleExceptions( final String[] exceptions )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses overide to handle code attribute.
+   *
+   * @param maxStack the max stack size in words.
+   * @param maxLocals the max local count.
+   * @param data the data containing bytecode.
+   * @param offset the offset into data when bytecode starts.
+   * @param codeLength the length of bytecode in bytes.
+   */
   protected void startCode( final int maxStack,
                             final int maxLocals,
                             final byte[] data,
@@ -714,6 +804,14 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override to handle exception handlers.
+   *
+   * @param startPC the start of range exception handler covers.
+   * @param endPC the end of range exception handler covers.
+   * @param handlerPC the location of handler.
+   * @param catchType null if finally else classname of exception caught.
+   */
   protected void handleExceptionHandler( final int startPC,
                                          final int endPC,
                                          final int handlerPC,
@@ -722,20 +820,39 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle attributes associated with a code attribute.
+   *
+   * @param name         the attributes name.
+   * @param data         the data.
+   * @param offset       the offset into data where attribute data starts sans tag and length fields.
+   * @param length       the length of attribute.
+   * @param constantPool the constant pool associated with class.
+   */
   protected void handleCodeAttribute( final String name,
                                       final byte[] data,
-                                      final int location,
+                                      final int offset,
                                       final long length,
                                       final ConstantPool constantPool )
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to receive notification when code attribute has completed parsing.
+   */
   protected void endCode()
   {
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle methods.
+   *
+   * @param name        the methods name.
+   * @param descriptor  the methods descriptor.
+   * @param accessFlags the methods access flags.
+   */
   protected void handleMethod( final String name,
                                final String descriptor,
                                final int accessFlags )
@@ -743,6 +860,15 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle attributes associated with a class.
+   *
+   * @param name         the attributes name.
+   * @param data         the data.
+   * @param offset       the offset into data where attribute data starts sans tag and length fields.
+   * @param length       the length of attribute.
+   * @param constantPool the constant pool associated with class.
+   */
   protected void handleClassAttribute( final String name,
                                        final byte[] data,
                                        final int offset,
@@ -752,6 +878,15 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle attributes associated with a method.
+   *
+   * @param name         the attributes name.
+   * @param data         the data.
+   * @param offset       the offset into data where attribute data starts sans tag and length fields.
+   * @param length       the length of attribute.
+   * @param constantPool the constant pool associated with class.
+   */
   protected void handleMethodAttribute( final String name,
                                         final byte[] data,
                                         final int offset,
@@ -761,6 +896,15 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle attributes associated with a field.
+   *
+   * @param name         the attributes name.
+   * @param data         the data.
+   * @param offset       the offset into data where attribute data starts sans tag and length fields.
+   * @param length       the length of attribute.
+   * @param constantPool the constant pool associated with class.
+   */
   protected void handleFieldAttribute( final String name,
                                        final byte[] data,
                                        final int offset,
@@ -770,6 +914,13 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Subclasses override method to handle fields.
+   *
+   * @param name        the fields name.
+   * @param descriptor  the fields descriptor.
+   * @param accessFlags the fields access flags.
+   */
   protected void handleField( final String name,
                               final String descriptor,
                               final int accessFlags )
@@ -777,6 +928,11 @@ public abstract class ClassFileParser
     throw newUnimplementedException();
   }
 
+  /**
+   * Helper to create exception to throw when handler not implemented.
+   *
+   * @return the exception.
+   */
   private IllegalStateException newUnimplementedException()
   {
     return new IllegalStateException( "Unimplemented handler invoked." );
