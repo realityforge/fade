@@ -12,6 +12,198 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseInnerClassElement()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //innerClass
+        1, 0, 1, 'b', //outerClass
+        1, 0, 1, 'c', //innerName
+        7, 0, 1, //class to innerClass
+        7, 0, 2, //class to outerClass
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //innerClass
+        4, //outerClass
+        8, //innerName
+        12, //class to innerClass
+        15, //class to outerClass
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of inner classes
+        0, 4, //innerClass index
+        0, 5, //outerClass index
+        0, 3, //name index
+        0, 2, //access flags
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleInnerClass( final String innerClass,
+                                       final String outerClass,
+                                       final String innerName,
+                                       final int innerClassAccessFlags )
+      {
+        assertEquals( "innerName", "c", innerName );
+        assertEquals( "innerClassAccessFlags", 2, innerClassAccessFlags );
+        assertEquals( "outerClass", "b", outerClass );
+        assertEquals( "innerClass", "a", innerClass );
+      }
+    };
+
+    parser.parseInnerClasses( data, 0, constantPool );
+  }
+
+  public void test_parseInnerClassElement_with_null_inner_class()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //innerClass
+        1, 0, 1, 'b', //outerClass
+        1, 0, 1, 'c', //innerName
+        7, 0, 1, //class to innerClass
+        7, 0, 2, //class to outerClass
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //innerClass
+        4, //outerClass
+        8, //innerName
+        12, //class to innerClass
+        15, //class to outerClass
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of inner classes
+        0, 0, //innerClass index
+        0, 5, //outerClass index
+        0, 3, //name index
+        0, 2, //access flags
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleInnerClass( final String innerClass,
+                                       final String outerClass,
+                                       final String innerName,
+                                       final int innerClassAccessFlags )
+      {
+        assertEquals( "innerName", "c", innerName );
+        assertEquals( "innerClassAccessFlags", 2, innerClassAccessFlags );
+        assertEquals( "outerClass", "b", outerClass );
+        assertEquals( "innerClass", null, innerClass );
+      }
+    };
+
+    parser.parseInnerClasses( data, 0, constantPool );
+  }
+
+  public void test_parseInnerClassElement_with_null_outer_class()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //innerClass
+        1, 0, 1, 'b', //outerClass
+        1, 0, 1, 'c', //innerName
+        7, 0, 1, //class to innerClass
+        7, 0, 2, //class to outerClass
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //innerClass
+        0, //outerClass
+        8, //innerName
+        12, //class to innerClass
+        15, //class to outerClass
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of inner classes
+        0, 4, //innerClass index
+        0, 0, //outerClass index
+        0, 3, //name index
+        0, 2, //access flags
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleInnerClass( final String innerClass,
+                                       final String outerClass,
+                                       final String innerName,
+                                       final int innerClassAccessFlags )
+      {
+        assertEquals( "innerName", "c", innerName );
+        assertEquals( "innerClassAccessFlags", 2, innerClassAccessFlags );
+        assertEquals( "outerClass", null, outerClass );
+        assertEquals( "innerClass", "a", innerClass );
+      }
+    };
+
+    parser.parseInnerClasses( data, 0, constantPool );
+  }
+
+  public void test_parseInnerClassElement_with_null_inner_name()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a', //innerClass
+        1, 0, 1, 'b', //outerClass
+        1, 0, 1, 'c', //innerName
+        7, 0, 1, //class to innerClass
+        7, 0, 2, //class to outerClass
+
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //innerClass
+        4, //outerClass
+        8, //innerName
+        12, //class to innerClass
+        15, //class to outerClass
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, //count of inner classes
+        0, 4, //innerClass index
+        0, 5, //outerClass index
+        0, 0, //name index
+        0, 2, //access flags
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleInnerClass( final String innerClass,
+                                       final String outerClass,
+                                       final String innerName,
+                                       final int innerClassAccessFlags )
+      {
+        assertEquals( "innerName", null, innerName );
+        assertEquals( "innerClassAccessFlags", 2, innerClassAccessFlags );
+        assertEquals( "outerClass", "b", outerClass );
+        assertEquals( "innerClass", "a", innerClass );
+      }
+    };
+
+    parser.parseInnerClasses( data, 0, constantPool );
+  }
+
   public void test_parseDeprecated_withBadLength()
   {
     try

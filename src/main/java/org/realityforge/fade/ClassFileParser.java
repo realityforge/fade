@@ -576,6 +576,13 @@ public abstract class ClassFileParser
     }
   }
 
+  /**
+   * Parse innerClasses attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseInnerClasses( final byte[] data, final int offset, final ConstantPool constantPool )
   {
     final int count = IOUtil.readUnsignedShort( data, offset );
@@ -614,6 +621,13 @@ public abstract class ClassFileParser
     handleEnclosingMethod( klass, methodName, methodType );
   }
 
+  /**
+   * Parse InnerClass element in InnerClasses attribute.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseInnerClassElement( final byte[] data,
                                                final int offset,
                                                final ConstantPool constantPool )
@@ -625,7 +639,7 @@ public abstract class ClassFileParser
     final int innerNameIndex =
       IOUtil.readUnsignedShort( data, offset + 4 );
     final int innerClassAccessFlags =
-      IOUtil.readUnsignedShort( data, offset + 4 );
+      IOUtil.readUnsignedShort( data, offset + 6 );
     final String innerClass;
     if( 0 != innerClassInfoIndex )
     {
