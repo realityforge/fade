@@ -16,7 +16,7 @@ public final class ConstantPool
   /** Cached copys of strings. Parsing CONSTANT_Utf8 is expensieve. */
   final String[] strings;
 
-  private ConstantPool( final byte[] data, final int[] offsets )
+  ConstantPool( final byte[] data, final int[] offsets )
   {
     this.data = data;
     this.offsets = offsets;
