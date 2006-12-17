@@ -322,7 +322,7 @@ public abstract class ClassFileParser
     return offset;
   }
 
-  private int parseElementValue( final String name,
+  int parseElementValue( final String name,
                                  final byte[] data,
                                  final int offset,
                                  final ConstantPool constantPool )

@@ -12,6 +12,324 @@ public class TestClassFileParser
   {
   }
 
+  public void test_parseElementValue_expecting_Boolean()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 1 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'Z', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", Boolean.TRUE, value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_byte()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'B', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", ( (byte)42 ), value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Char()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 'a' //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'C', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", 'a', value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Short()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'S', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", ( (short)42 ), value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Integer()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        3, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'I', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", 42, value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Float()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        4, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'F', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", Float.intBitsToFloat( 42 ), value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Long()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        5, 0, 0, 0, 0, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'J', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", 42L, value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Double()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        6, 0, 0, 0, 0, 0, 0, 0, 42 //value
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'D', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", Double.longBitsToDouble( 42L ), value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_UTF()
+  {
+    final byte[] cpData = new byte[]
+      {
+        1, 0, 1, 'a', //exception 1
+        8, 0, 1, //string to exception 1
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        's', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", "a", value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_expecting_Class()
+  {
+    final byte[] cpData = new byte[]
+      {
+        1, 0, 1, 'a', //exception 1
+        7, 0, 1, //class to exception 1
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0, //value
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        'c', 0, 1, //value index
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "han", name );
+        assertEquals( "value", "a", value );
+      }
+    };
+
+    parser.parseElementValue( "han", data, 0, constantPool );
+  }
+
+  public void test_parseElementValue_with_bad_tag()
+  {
+    final ConstantPool constantPool = new ConstantPool( new byte[0], new int[0] );
+    final byte[] data = new byte[]{42};
+
+    try
+    {
+      new ConcreteParser().parseElementValue( "han", data, 0, constantPool );
+      fail( "Expected exception" );
+    }
+    catch( final ClassFormatError cfe )
+    {
+      final String message =
+        "Unknown attribute tag (" + (char)42 + ") at position 1";
+      assertEquals( "cfe.getMessage()", message, cfe.getMessage() );
+    }
+  }
+
   public void test_checkTag_bad_throws_exception()
   {
     try
@@ -364,48 +682,6 @@ public class TestClassFileParser
 
   public void test_parseCode()
   {
-    /*
-    final int maxStack = IOUtil.readUnsignedShort( data, offset );
-    final int maxLocals = IOUtil.readUnsignedShort( data, offset + 2 );
-    final long codeLength = IOUtil.readUnsignedInteger( data, offset + 4 );
-    startCode( maxStack, maxLocals, data, offset + 8, codeLength );
-    int location = (int)( offset + codeLength + 8 );
-    final int exceptionHandlerCount = IOUtil.readUnsignedShort( data, location );
-    location += 2;
-    for( int i = 0; i < exceptionHandlerCount; i++ )
-    {
-      final int startPC = IOUtil.readUnsignedShort( data, location );
-      final int endPC = IOUtil.readUnsignedShort( data, location + 2 );
-      final int handlerPC = IOUtil.readUnsignedShort( data, location + 4 );
-      final int catchTypeIndex = IOUtil.readUnsignedShort( data, location + 6 );
-      final String catchType;
-      if( 0 != catchTypeIndex )
-      {
-        catchType = constantPool.getClassEntry( catchTypeIndex );
-      }
-      else
-      {
-        catchType = null;
-      }
-      handleExceptionHandler( startPC, endPC, handlerPC, catchType );
-      location += 8;
-    }
-
-    final int attributeCount = IOUtil.readUnsignedShort( data, location );
-    location += 2;
-    for( int i = 0; i < attributeCount; i++ )
-    {
-      final int nameIndex = IOUtil.readUnsignedShort( data, location );
-      final String name = constantPool.getUtfEntry( nameIndex );
-      final long length = IOUtil.readUnsignedInteger( data, location + 2 );
-      location += 6;
-      handleCodeAttribute( name, data, location, length, constantPool );
-      location += length;
-    }
-    endCode();
-
-    */
-
     final byte[] cpData = new byte[]
       {
         //1b tag, Nb data
