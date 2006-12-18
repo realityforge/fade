@@ -322,10 +322,19 @@ public abstract class ClassFileParser
     return offset;
   }
 
+  /**
+   * Parse element value for annotation.
+   *
+   * @param name   the name of the element or null if nested in array.
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   * @return the number of bytes parsed.
+   */
   int parseElementValue( final String name,
-                                 final byte[] data,
-                                 final int offset,
-                                 final ConstantPool constantPool )
+                         final byte[] data,
+                         final int offset,
+                         final ConstantPool constantPool )
   {
     final byte tag = data[offset];
     int location = 1 + offset;
@@ -435,6 +444,8 @@ public abstract class ClassFileParser
         location += 2;
         if( size == 0 )
         {
+          startAnnotationValueArray( name, 0 );
+          endAnnotationValueArray();
           break;
         }
         final byte arrayTag = data[location];
@@ -571,9 +582,10 @@ public abstract class ClassFileParser
             handleAnnotationValue( name, value );
             break;
           }
+          //TODO: collect array tags so arrays of arrays of primitives will be specially handled
+          case ClassFileFormat.ANN_TAG_ARRAY:                                                                         
           case ClassFileFormat.ANN_TAG_ANNOTATION:
           case ClassFileFormat.ANN_TAG_ENUM:
-          case ClassFileFormat.ANN_TAG_ARRAY:
           {
             startAnnotationValueArray( name, size );
             for( int j = 0; j < size; j++ )
@@ -586,7 +598,8 @@ public abstract class ClassFileParser
           }
 
           default:
-            throw new IllegalStateException( "Unhandled array type: " + (char)arrayTag );
+            final String message = "Unexpected array type " + (char)arrayTag + " at position " + location;
+            throw new ClassFormatError( message );
         }
         break;
       }
