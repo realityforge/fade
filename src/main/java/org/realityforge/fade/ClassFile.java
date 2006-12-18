@@ -221,10 +221,20 @@ public class ClassFile
     return IOUtil.readUnsignedShort( data, 6 );
   }
 
+  /**
+   * Method that used to process Class.
+   * Processing will use the supplied parser to parse the class file. The fields,
+   * methods and class sections will only be parsed if specified flag is true.
+   *
+   * @param parser the user supplied parser.
+   * @param parseFields true to parse field section, false otherwise.
+   * @param parseMethods true to parse method section, false otherwise.
+   * @param parseClassSection true to parse class section, false otherwise.
+   */
   public void processClass( final ClassFileParser parser,
                             final boolean parseFields,
                             final boolean parseMethods,
-                            final boolean parseClassAttributes )
+                            final boolean parseClassSection )
   {
     if( parseFields )
     {
@@ -240,7 +250,7 @@ public class ClassFile
         parser.parseMethod( data, offset, constantPool );
       }
     }
-    if( parseClassAttributes )
+    if( parseClassSection )
     {
       parser.parseClassAttributes( data, attributeOffset, constantPool );
     }
