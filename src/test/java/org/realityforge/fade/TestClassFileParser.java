@@ -15,6 +15,96 @@ public class TestClassFileParser
   boolean started;
   boolean done;
 
+  public void test_parseAnnotations()
+  {
+    final byte[] cpData = new byte[]
+      {
+        //1b tag, Nb data
+        1, 0, 1, 'a',
+        1, 0, 1, 'b',
+        1, 0, 1, 'c',
+        1, 0, 1, 'd',
+        1, 0, 1, 'e',
+      };
+    final int[] offsets = new int[]
+      {
+        0, //ignored
+        0,
+        4,
+        8, 
+        12,
+        16,
+      };
+    final ConstantPool constantPool = new ConstantPool( cpData, offsets );
+    final byte[] data = new byte[]
+      {
+        0, 1, // 1 annotation in group
+        0, 1, // annotation name index
+        0, 1, // number of element-value pairs in annotation
+           0, 2, // name index for for pair
+          '[', 0, 1, //array of size 1
+             '@',  // Annotation tag
+             0, 3, // annotation name index
+             0, 1, // count of element-value pairs
+                0, 4, // name index for first in nested annotation
+                's', 0, 5, // value index of str value
+      };
+
+    final ConcreteParser parser = new ConcreteParser()
+    {
+      protected void handleAnnotationGroup( final String type )
+      {
+        assertEquals( "name", ClassFileFormat.ATTR_RuntimeVisibleAnnotations, type );
+      }
+
+      int depth;
+
+      protected void startAnnotation( final String type )
+      {
+        depth++;
+        if( 1 == depth )
+        {
+          assertEquals( "type", "a", type );
+        }
+        else
+        {
+          assertEquals( "type", "c", type );
+        }
+      }
+
+      protected void endAnnotationValueAnnotation()
+      {
+      }
+
+      protected void startAnnotationValueAnnotation( final String name )
+      {
+        assertEquals( "name", null, name );
+      }
+
+      protected void endAnnotation()
+      {
+      }
+
+      protected void startAnnotationValueArray( final String name, final int length )
+      {
+        assertEquals( "name", "b", name );
+        assertEquals( "length", 1, length );
+      }
+
+      protected void endAnnotationValueArray()
+      {         
+      }
+
+      protected void handleAnnotationValue( final String name, final Object value )
+      {
+        assertEquals( "name", "d", name );
+        assertEquals( "value", "e", value );
+      }
+    };
+
+    parser.parseAnnotations( ClassFileFormat.ATTR_RuntimeVisibleAnnotations, data, 0, constantPool );
+  }
+
   public void test_parseElementValue_with_bad_array()
   {
     final ConstantPool constantPool = new ConstantPool( new byte[0], new int[0] );
@@ -2042,9 +2132,19 @@ final int nameIndex = IOUtil.readUnsignedShort( data, location );
     verifyHandleStringArg( "startAnnotation" );
   }
 
+  public void test_startAnnotationValueAnnotation_throws_UnimplementedException()
+  {
+    verifyHandleStringArg( "startAnnotationValueAnnotation" );
+  }                                                
+
   private void verifyHandleStringArg( final String type )
   {
     verifyUnimplementedMethod( type, new Class[]{String.class}, new Object[]{""} );
+  }
+
+  public void test_endAnnotationValueAnnotation_throws_UnimplementedException()
+  {
+    verifyHandleNoArg( "endAnnotationValueAnnotation" );
   }
 
   public void test_handleDeprecated_throws_UnimplementedException()

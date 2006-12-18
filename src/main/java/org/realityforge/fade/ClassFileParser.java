@@ -287,6 +287,14 @@ public abstract class ClassFileParser
     handleSourceFile( utfEntry );
   }
 
+  /**
+   * Method that parses a group of annotations.
+   *
+   * @param type   the name of attribute annotations parsed from. i.e. "RuntimeVisibleAnnotations"
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   */
   protected final void parseAnnotations( final String type,
                                          final byte[] data,
                                          final int offset,
@@ -301,6 +309,14 @@ public abstract class ClassFileParser
     }
   }
 
+  /**
+   * Method that parses an annotation.
+   *
+   * @param data   the data.
+   * @param offset the offset into data where element starts.
+   * @param constantPool the associated constant pool.
+   * @return the offset of next element
+   */
   private int parseAnnotation( final byte[] data,
                                final int offset,
                                final ConstantPool constantPool )
@@ -435,7 +451,9 @@ public abstract class ClassFileParser
       }
       case ClassFileFormat.ANN_TAG_ANNOTATION:
       {
+        startAnnotationValueAnnotation( name );
         parseAnnotation( data, location, constantPool );
+        endAnnotationValueAnnotation();
         break;
       }
       case ClassFileFormat.ANN_TAG_ARRAY:
@@ -1034,6 +1052,24 @@ public abstract class ClassFileParser
   protected void handleField( final String name,
                               final String descriptor,
                               final int accessFlags )
+  {
+    throw newUnimplementedException();
+  }
+
+  /**
+   * Subclasses override method to handle nested annotations.
+   */
+  protected void endAnnotationValueAnnotation()
+  {
+    throw newUnimplementedException();
+  }
+
+  /**
+   * Subclasses override method to handle nested annotations.
+   *
+   * @param name the name of value.
+   */
+  protected void startAnnotationValueAnnotation( final String name )
   {
     throw newUnimplementedException();
   }
