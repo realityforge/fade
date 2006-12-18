@@ -347,7 +347,7 @@ public abstract class ClassFileParser
    * @param constantPool the associated constant pool.
    * @return the number of bytes parsed.
    */
-  int parseElementValue( final String name,
+  final int parseElementValue( final String name,
                          final byte[] data,
                          final int offset,
                          final ConstantPool constantPool )
