@@ -1,0 +1,13 @@
+<project name="fade" default="main" basedir=".">
+
+  <target name="clean" description="Clean the output directory">
+    <delete dir="target"/>
+  </target>
+
+  <target name="main" description="Compile the code">
+    <mkdir dir="target/classes"/>
+    <javac srcdir="src/main/java" destdir="target/classes" debug="true" deprecation="true" optimize="false"/>
+    <jar jarfile="target/fade.jar" basedir="target/classes"/>
+  </target>
+
+</project>
