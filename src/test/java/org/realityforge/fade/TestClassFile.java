@@ -354,7 +354,7 @@ public class TestClassFile
     {
     }
 
-    protected void startCode( final int maxStack, final int maxLocals, final byte[] data, final int offset, final long codeLength )
+    protected void startCode(final int maxStack, final int maxLocals, final byte[] data, final int offset, final long codeLength, final ConstantPool constantPool)
     {
     }
 

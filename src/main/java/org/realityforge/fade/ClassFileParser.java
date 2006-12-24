@@ -117,7 +117,7 @@ public abstract class ClassFileParser
     final int maxStack = IOUtil.readUnsignedShort( data, offset );
     final int maxLocals = IOUtil.readUnsignedShort( data, offset + 2 );
     final long codeLength = IOUtil.readUnsignedInteger( data, offset + 4 );
-    startCode( maxStack, maxLocals, data, offset + 8, codeLength );
+    startCode( maxStack, maxLocals, data, offset + 8, codeLength, constantPool );
     int location = (int)( offset + codeLength + 8 );
     final int exceptionHandlerCount = IOUtil.readUnsignedShort( data, location );
     location += 2;
@@ -924,12 +924,14 @@ public abstract class ClassFileParser
    * @param data       the data containing bytecode.
    * @param offset     the offset into data when bytecode starts.
    * @param codeLength the length of bytecode in bytes.
+   * @param constantPool
    */
-  protected void startCode( final int maxStack,
-                            final int maxLocals,
-                            final byte[] data,
-                            final int offset,
-                            final long codeLength )
+  protected void startCode(final int maxStack,
+                           final int maxLocals,
+                           final byte[] data,
+                           final int offset,
+                           final long codeLength,
+                           final ConstantPool constantPool)
   {
     throw newUnimplementedException();
   }

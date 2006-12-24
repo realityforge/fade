@@ -1468,11 +1468,12 @@ final int nameIndex = IOUtil.readUnsignedShort( data, location );
       int exception;
       int attribute;
 
-      protected void startCode( final int maxStack,
-                                final int maxLocals,
-                                final byte[] p_data,
-                                final int offset,
-                                final long codeLength )
+      protected void startCode(final int maxStack,
+                               final int maxLocals,
+                               final byte[] p_data,
+                               final int offset,
+                               final long codeLength,
+                               final ConstantPool constantPool)
       {
         assertEquals( "maxStack", 2, maxStack );
         assertEquals( "maxLocals", 3, maxLocals );
@@ -2095,8 +2096,8 @@ final int nameIndex = IOUtil.readUnsignedShort( data, location );
   public void test_startCode_throws_UnimplementedException()
   {
     final Class[] types =
-      new Class[]{Integer.TYPE, Integer.TYPE, byte[].class, Integer.TYPE, Long.TYPE};
-    final Object[] args = new Object[]{0, 0, new byte[0], 0, 0L};
+      new Class[]{Integer.TYPE, Integer.TYPE, byte[].class, Integer.TYPE, Long.TYPE,ConstantPool.class};
+    final Object[] args = new Object[]{0, 0, new byte[0], 0, 0L,null};
     verifyUnimplementedMethod( "startCode", types, args );
   }
 
