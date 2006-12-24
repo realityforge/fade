@@ -62,7 +62,7 @@ public class ClassFile
   {
     final int offset = constantPool.getClassHeaderOffset() + 4;
     final int index = IOUtil.readUnsignedShort( data, offset );
-    return constantPool.getClassEntry( index );
+    return ( 0 == index ) ? null : constantPool.getClassEntry( index );
   }
 
   /**
