@@ -1,8 +1,9 @@
 package org.realityforge.fade;
 
-/** Interface containing constants defining class file format. */
-public interface ClassFileFormat
-{
+/**
+ * Interface containing constants defining class file format.
+ */
+public interface ClassFileFormat {
   ///Magic number at start of file
   int MAGIC = 0xCAFEBABE;
 
@@ -90,4 +91,14 @@ public interface ClassFileFormat
   byte ANN_TAG_CLASS = 'c';
   byte ANN_TAG_ANNOTATION = '@';
   byte ANN_TAG_ARRAY = '[';
+
+  //Types for newarray instruction
+  byte T_BOOLEAN = 4;
+  byte T_CHAR = 5;
+  byte T_FLOAT = 6;
+  byte T_DOUBLE = 7;
+  byte T_BYTE = 8;
+  byte T_SHORT = 9;
+  byte T_INT = 10;
+  byte T_LONG = 11;
 }
