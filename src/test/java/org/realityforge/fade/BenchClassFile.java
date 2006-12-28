@@ -199,9 +199,18 @@ public class BenchClassFile
     protected void handleCodeAttribute( final String name, final byte[] data, final int location, final long length,
                                         final ConstantPool constantPool )
     {
-      if( ClassFileFormat.ATTR_ConstantValue.equals( name ) )
+
+      if( ClassFileFormat.ATTR_LineNumberTable.equals( name ) )
       {
-        ///
+        //
+      }
+      else if( ClassFileFormat.ATTR_LocalVariableTable.equals( name ) )
+      {
+        //
+      }
+      else if( ClassFileFormat.ATTR_LocalVariableTypeTable.equals( name ) )
+      {
+        //
       }
       else
       {
