@@ -69,6 +69,7 @@ public interface ClassFileFormat {
   String ATTR_SourceDebugExtension = "SourceDebugExtension"; //Class
   String ATTR_LineNumberTable = "LineNumberTable"; //Code
   String ATTR_LocalVariableTable = "LocalVariableTable"; //Code
+  String ATTR_LocalVariableTypeTable = "LocalVariableTypeTable"; //Code
   String ATTR_StackMapTable = "StackMapTable"; //Code
   String ATTR_Signature = "Signature"; //???
   String ATTR_AnnotationDefault = "AnnotationDefault"; //Method
