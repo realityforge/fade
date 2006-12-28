@@ -4,7 +4,7 @@
   <groupId>org.realityforge.fade</groupId>
   <artifactId>fade</artifactId>
   <packaging>jar</packaging>
-  <version>0.2</version>
+  <version>0.3-dev</version>
   <name>fade</name>
   <url>http://maven.apache.org</url>
   <dependencies>
